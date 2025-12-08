@@ -27,6 +27,7 @@ const apps: AppItem[] = [
   { id: 'skills', label: 'Skills', icon: 'bx-brain', color: 'from-purple-400 to-purple-600', link: '/skills' },
   { id: 'credentials', label: 'Credentials', icon: 'bxs-badge-check', color: 'from-red-400 to-red-600', link: '/credentials' },
   { id: 'github', label: 'GitHub', icon: 'bxl-github', color: 'from-gray-400 to-gray-600', link: 'https://github.com/chuoois' },
+  { id: 'settings', label: 'Settings', icon: 'bxs-cog', color: 'from-yellow-400 to-yellow-600', link: '/login' },
 ];
 
 interface DockIconProps {

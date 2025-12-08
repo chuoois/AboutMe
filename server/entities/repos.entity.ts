@@ -8,32 +8,29 @@ import {
 @Entity("repos")
 export class Repo {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column({ type: "varchar", length: 255 })
-  title: string;
+  title!: string;
 
   @Column({ type: "varchar", length: 100 })
-  icon: string;
+  icon!: string;
 
   @Column({ type: "text" })
-  description: string;
+  description!: string;
 
   @Column({ type: "json", nullable: false })
-  tags: string[];
-
-  @Column({ type: "varchar", length: 100, nullable: true })
-  title_color: string | null;
+  tags!: string[];
 
   @Column({ type: "varchar", length: 255, nullable: true })
-  filename: string | null;
+  filename!: string | null;
 
   @Column({ type: "varchar", length: 255, nullable: true })
-  live_demo_url: string | null;
+  live_demo_url!: string | null;
 
   @Column({ type: "varchar", length: 255, nullable: true })
-  git_url: string | null;
+  git_url!: string | null;
 
   @CreateDateColumn({ type: "timestamp" })
-  created_at: Date;
+  created_at!: Date;
 }

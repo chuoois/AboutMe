@@ -8,17 +8,17 @@ import {
 @Entity("skills")
 export class Skill {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column({ type: "varchar", length: 255 })
-  category: string;
+  category!: string;
 
   @Column({ type: "varchar", length: 255 })
-  skill_name: string;
+  skill_name!: string;
 
   @Column({ type: "varchar", length: 255, nullable: true })
-  icon: string | null;
+  icon!: string | null;
 
   @CreateDateColumn({ type: "timestamp" })
-  created_at: Date;
+  created_at!: Date;
 }

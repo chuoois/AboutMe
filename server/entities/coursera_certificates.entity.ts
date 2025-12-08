@@ -8,32 +8,29 @@ import {
 @Entity("coursera_certificates")
 export class CourseraCertificate {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column({ type: "varchar", length: 255 })
-  coursera_name: string;
+  coursera_name!: string;
 
   @Column({ type: "varchar", length: 255, nullable: true })
-  specialization: string | null;
+  specialization!: string | null;
 
   @Column({ type: "varchar", length: 255, nullable: true })
-  icon: string | null;
-
-  @Column({ type: "varchar", length: 50, nullable: true })
-  iconColor: string | null;
+  icon!: string | null;
 
   @Column({ type: "varchar", length: 100, default: "Coursera" })
-  issuer: string;
+  issuer!: string;
 
   @Column({ type: "date" })
-  issue_date: Date;
+  issue_date!: Date;
 
   @Column({ type: "varchar", length: 500, nullable: true })
-  credential_url: string | null;
+  credential_url!: string | null;
 
   @Column({ type: "text", nullable: true })
-  description: string | null;
+  description!: string | null;
 
   @CreateDateColumn({ type: "timestamp" })
-  created_at: Date;
+  created_at!: Date;
 }
