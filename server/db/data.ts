@@ -1,23 +1,30 @@
-import mysql, { RowDataPacket } from 'mysql2/promise';
+import "reflect-metadata";
+import { DataSource } from "typeorm";
+import { ENTITIES } from "@/server/entities/entities-main";
 
-const pool = mysql.createPool({
-  host: process.env.DB_HOST!,
-  user: process.env.DB_USER!,
-  password: process.env.DB_PASSWORD!,
-  database: process.env.DB_NAME!,
-  port: Number(process.env.DB_PORT || 3306),
-  waitForConnections: true,
-  connectionLimit: 10,
+const AppDataSource = new DataSource({
+  type: "mysql",
+  host: process.env.DB_HOST,
+  port: Number(process.env.DB_PORT),
+  username: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  synchronize: process.env.NODE_ENV === "development",  
+  logging: process.env.NODE_ENV === "development",
+  entities: ENTITIES,
+  charset: "utf8mb4",
+  timezone: "+07:00",
 });
 
-// SELECT 
-export async function selectQuery<T extends RowDataPacket[]>(sql: string, params: any[] = []): Promise<T> {
-  const [rows] = await pool.query<T>(sql, params);
-  return rows;
-}
+let initialized = false;
 
-// INSERT/UPDATE
-export async function executeQuery(sql: string, params: any[] = []) {
-  const [result] = await pool.execute(sql, params);
-  return result;
-}
+export const getDataSource = async () => {
+  if (!initialized) {
+    if (!AppDataSource.isInitialized) {
+      await AppDataSource.initialize();
+      console.log("TypeORM DataSource initialized");
+    }
+    initialized = true;
+  }
+  return AppDataSource;
+};
