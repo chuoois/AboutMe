@@ -39,7 +39,11 @@ export async function fetchData<T>(
     // Xử lý lỗi HTTP
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || `HTTP Error: ${response.status}`);
+      const msg =
+        (errorData && (errorData.message || errorData.error)) ||
+        (typeof errorData === 'string' ? errorData : undefined) ||
+        `HTTP Error: ${response.status}`;
+      throw new Error(msg as string);
     }
 
     // Xử lý trường hợp 204 No Content (thường gặp khi DELETE/PUT)

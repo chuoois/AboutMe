@@ -1,4 +1,5 @@
+import UserProfile from '@/components/UserProfile';
 
 export default function HomePage() {
-  return null;
+  return <UserProfile />;
 }

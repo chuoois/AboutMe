@@ -21,8 +21,7 @@ interface AppItem {
 }
 
 const apps: AppItem[] = [
-  { id: 'home', label: 'Home', icon: 'bxs-home', color: 'from-blue-400 to-blue-600', link: '/' },
-  { id: 'profile', label: 'User Profile', icon: 'bxs-user-circle', color: 'from-blue-400 to-blue-600', link: '/profile' },
+  { id: 'home', label: 'Home', icon: 'bxs-home', color: 'from-blue-400 to-blue-600', link: '/home' },
   { id: 'projects', label: 'Projects', icon: 'bxs-folder', color: 'from-green-400 to-green-600', link: '/repos' },
   { id: 'skills', label: 'Skills', icon: 'bx-brain', color: 'from-purple-400 to-purple-600', link: '/skills' },
   { id: 'credentials', label: 'Credentials', icon: 'bxs-badge-check', color: 'from-red-400 to-red-600', link: '/credentials' },

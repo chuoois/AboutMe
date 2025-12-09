@@ -9,8 +9,6 @@ export const dbOptions: DataSourceOptions = {
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  synchronize: process.env.NODE_ENV === "development", // Chỉ auto-sync ở dev
-  logging: process.env.NODE_ENV === "development",
   entities: ENTITIES,
   charset: "utf8mb4",
   timezone: "+07:00",

@@ -44,7 +44,6 @@ export default function RootLayout({
           className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0 transition-all duration-700 ease-in-out transform scale-105 animate-wallpaper-zoom"
           style={{ backgroundImage: `url('${wallpaperUrl}')` }}
         >
-          {/* Overlay tối nhẹ để icon trắng dễ đọc hơn */}
           <div className="absolute inset-0 bg-black/10 backdrop-blur-[0px]" />
         </div>
         <main>

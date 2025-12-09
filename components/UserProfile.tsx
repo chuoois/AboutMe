@@ -30,7 +30,6 @@ export default function UserProfile() {
                   alt="Avatar"
                 />
               </div>
-              <div className="absolute bottom-2 right-2 w-4 h-4 bg-green-500 border-[3px] border-white rounded-full z-20 shadow-sm" title="Online"></div>
             </div>
 
             {/* Name & Role */}
