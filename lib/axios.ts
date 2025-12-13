@@ -1,42 +1,28 @@
 // lib/axios.ts
-import axios from "axios";
+'use client';
 
-const getBaseUrl = () => {
-  if (process.env.NODE_ENV === "production") {
-    return "https://myapp.example.com/api";
-  }
-  return "http://localhost:3000/api"; 
-};
+import axios from 'axios';
 
 export const api = axios.create({
-  baseURL: getBaseUrl(),
-  withCredentials: true, 
+  baseURL: '/api',        
+  withCredentials: true,
   headers: {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
   },
 });
 
-// ============================================
-// Response Interceptor - Xử lý refresh token
-// ============================================
 api.interceptors.response.use(
-  (response) => response,
+  (res) => res,
   async (error) => {
     const originalRequest = error.config;
 
-    // Nếu 401 và chưa retry
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
       try {
-        // Gọi lại request (middleware sẽ tự động refresh token)
         return api(originalRequest);
-      } catch (retryError) {
-        // Nếu vẫn fail → redirect login
-        if (typeof window !== 'undefined') {
-          window.location.href = '/login';
-        }
-        return Promise.reject(retryError);
+      } catch {
+        window.location.href = '/login';
       }
     }
 
