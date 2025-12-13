@@ -107,16 +107,16 @@ export default function Projects() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search"
+                  placeholder="Search projects..."
                   className="w-full bg-[#1a1a1a] border border-white/10 rounded-md py-1.5 pl-9 pr-3 text-sm text-gray-200 
-                             placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+                             placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-all"
                 />
               </div>
             </div>
 
             {/* --- CONTENT AREA --- */}
             <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 bg-[#1e1e1e] relative">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                 {loading ? (
                   Array.from({ length: pagination.limit }).map((_, idx) => (
                     <div key={idx} className="bg-[#252525] border border-white/5 rounded-xl p-5 h-48 animate-pulse">
@@ -134,6 +134,11 @@ export default function Projects() {
                       </div>
                     </div>
                   ))
+                ) : repos.length === 0 ? (
+                  <div className="col-span-full flex flex-col items-center justify-center py-20 text-gray-500">
+                    <i className='bx bxs-folder-open text-6xl mb-4 opacity-50'></i>
+                    <p>No projects found</p>
+                  </div>
                 ) : (
                   repos.map(repo => (
                     <div
@@ -143,7 +148,7 @@ export default function Projects() {
                                  rounded-xl p-5 transition-all duration-300 flex flex-col hover:shadow-lg hover:shadow-black/20 hover:-translate-y-1 cursor-pointer"
                     >
                       <div className="flex items-start justify-between mb-4">
-                        <div className={`p-3 rounded-lg bg-[#1e1e1e] border border-white/5 group-hover:scale-110 transition-transform duration-300`}>
+                        <div className="p-3 rounded-lg bg-[#1e1e1e] border border-white/5 group-hover:scale-110 transition-transform duration-300">
                           <i className={`bx ${repo.icon || 'bx-code-alt'} text-3xl ${repo.color || 'text-gray-400'}`}></i>
                         </div>
 
@@ -163,14 +168,14 @@ export default function Projects() {
                         </div>
                       </div>
 
-                      <h3 className="font-bold text-gray-100 text-base mb-2 group-hover:text-blue-400 transition-colors truncate">
+                      <h3 className="font-bold text-gray-100 text-base mb-2 group-hover:text-blue-400 transition-colors line-clamp-1">
                         {repo.title}
                       </h3>
-                      <p className="text-sm text-gray-400 line-clamp-2 mb-4 leading-relaxed h-10">
+                      <p className="text-sm text-gray-400 line-clamp-2 mb-4 leading-relaxed flex-1">
                         {repo.description}
                       </p>
 
-                      <div className="mt-auto flex gap-2 flex-wrap">
+                      <div className="flex gap-2 flex-wrap">
                         {repo.tags?.slice(0, 3).map((t, i) => (
                           <span
                             key={i}
@@ -180,7 +185,7 @@ export default function Projects() {
                           </span>
                         ))}
                         {repo.tags && repo.tags.length > 3 && (
-                          <span className="text-[10px] px-2 py-1 text-gray-600">+ {repo.tags.length - 3}</span>
+                          <span className="text-[10px] px-2 py-1 text-gray-600">+{repo.tags.length - 3}</span>
                         )}
                       </div>
                     </div>
@@ -195,25 +200,27 @@ export default function Projects() {
                 {pagination.total} items <span className="text-gray-700">|</span> {pagination.limit} per page
               </div>
 
-              <div className="flex items-center gap-3">
-                <span className="text-gray-400">Page {pagination.page} of {pagination.totalPages}</span>
-                <div className="flex gap-1">
-                  <button
-                    onClick={() => handlePageChange(pagination.page - 1)}
-                    disabled={pagination.page === 1}
-                    className="w-6 h-6 flex items-center justify-center rounded hover:bg-white/10 disabled:opacity-30 disabled:hover:bg-transparent text-gray-300 transition-colors"
-                  >
-                    <i className='bx bx-chevron-left text-lg'></i>
-                  </button>
-                  <button
-                    onClick={() => handlePageChange(pagination.page + 1)}
-                    disabled={pagination.page === pagination.totalPages}
-                    className="w-6 h-6 flex items-center justify-center rounded hover:bg-white/10 disabled:opacity-30 disabled:hover:bg-transparent text-gray-300 transition-colors"
-                  >
-                    <i className='bx bx-chevron-right text-lg'></i>
-                  </button>
+              {pagination.totalPages > 1 && (
+                <div className="flex items-center gap-3">
+                  <span className="text-gray-400">Page {pagination.page} of {pagination.totalPages}</span>
+                  <div className="flex gap-1">
+                    <button
+                      onClick={() => handlePageChange(pagination.page - 1)}
+                      disabled={pagination.page === 1}
+                      className="w-6 h-6 flex items-center justify-center rounded hover:bg-white/10 disabled:opacity-30 disabled:hover:bg-transparent text-gray-300 transition-colors"
+                    >
+                      <i className='bx bx-chevron-left text-lg'></i>
+                    </button>
+                    <button
+                      onClick={() => handlePageChange(pagination.page + 1)}
+                      disabled={pagination.page === pagination.totalPages}
+                      className="w-6 h-6 flex items-center justify-center rounded hover:bg-white/10 disabled:opacity-30 disabled:hover:bg-transparent text-gray-300 transition-colors"
+                    >
+                      <i className='bx bx-chevron-right text-lg'></i>
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
           </div>
@@ -222,35 +229,49 @@ export default function Projects() {
 
       {/* --- MODAL CHI TIẾT PROJECT --- */}
       {selectedRepo && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setSelectedRepo(null)}>
-          <div className="w-full max-w-2xl" onClick={(e) => e.stopPropagation()}>
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4" 
+          onClick={() => setSelectedRepo(null)}
+        >
+          <div 
+            className="w-full max-w-3xl" 
+            onClick={(e) => e.stopPropagation()}
+          >
             <MacWindow
               title={selectedRepo.title}
-              onClose={() => setSelectedRepo(null)}
               className="dark shadow-2xl"
+              // Đã bỏ prop onClose để tránh lỗi compile
             >
-              <div className="bg-[#1e1e1e] text-white rounded-2xl overflow-hidden">
+              <div className="bg-[#1e1e1e] text-white min-h-[500px] max-h-[85vh] overflow-y-auto">
                 <div className="p-8">
                   {/* Header với icon lớn */}
-                  <div className="flex items-center gap-6 mb-8">
-                    <div className="p-6 rounded-2xl bg-[#252525] border border-white/10 shadow-xl">
+                  <div className="flex items-start gap-6 mb-8">
+                    <div className="p-6 rounded-2xl bg-[#252525] border border-white/10 shadow-xl flex-shrink-0">
                       <i className={`bx ${selectedRepo.icon || 'bx-code-alt'} text-6xl ${selectedRepo.color || 'text-gray-400'}`}></i>
                     </div>
-                    <div>
-                      <h2 className="text-2xl font-bold text-white mb-2">{selectedRepo.title}</h2>
-                      <div className="flex gap-3">
+                    <div className="flex-1">
+                      <h2 className="text-2xl font-bold text-white mb-4">{selectedRepo.title}</h2>
+                      <div className="flex flex-wrap gap-3">
                         {selectedRepo.git_url && (
-                          <a href={selectedRepo.git_url} target="_blank" rel="noopener noreferrer"
-                            className="flex items-center gap-2 px-4 py-2 bg-[#252525] rounded-lg hover:bg-white/10 transition-colors">
-                            <i className='bx bxl-github text-lg'></i>
-                            <span className="text-sm">Source Code</span>
+                          <a 
+                            href={selectedRepo.git_url} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 px-5 py-3 bg-[#252525] rounded-xl hover:bg-white/10 transition-all font-medium border border-white/10"
+                          >
+                            <i className='bx bxl-github text-xl'></i>
+                            Source Code
                           </a>
                         )}
                         {selectedRepo.live_demo_url && (
-                          <a href={selectedRepo.live_demo_url} target="_blank" rel="noopener noreferrer"
-                            className="flex items-center gap-2 px-4 py-2 bg-blue-500/20 rounded-lg hover:bg-blue-500/30 transition-colors text-blue-400">
-                            <i className='bx bx-link-external text-lg'></i>
-                            <span className="text-sm">Live Demo</span>
+                          <a 
+                            href={selectedRepo.live_demo_url} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 px-5 py-3 bg-blue-500/20 rounded-xl hover:bg-blue-500/30 transition-all text-blue-400 font-medium border border-blue-500/30"
+                          >
+                            <i className='bx bx-link-external text-xl'></i>
+                            Live Demo
                           </a>
                         )}
                       </div>
@@ -260,12 +281,12 @@ export default function Projects() {
                   {/* Description */}
                   <div className="mb-8">
                     <h3 className="text-lg font-semibold text-gray-300 mb-3">Description</h3>
-                    <p className="text-gray-400 leading-relaxed text-base">
+                    <p className="text-gray-400 leading-relaxed text-base whitespace-pre-wrap">
                       {selectedRepo.description}
                     </p>
                   </div>
 
-                  {/* Tags */}
+                  {/* Technologies */}
                   <div>
                     <h3 className="text-lg font-semibold text-gray-300 mb-3">Technologies</h3>
                     <div className="flex flex-wrap gap-3">
