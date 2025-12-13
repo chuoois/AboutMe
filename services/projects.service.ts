@@ -16,6 +16,11 @@ export const projectsService = {
     return response;
   },
 
+  getProjectsforUser: async (filters?: GetProjectsFilters) => {
+    const response = await api.get("/user/projects", { params: filters });
+    return response;
+  },
+
   // Tạo project mới
   createProject: async (data: any) => {
     const response = await api.post("/admin/projects", data);

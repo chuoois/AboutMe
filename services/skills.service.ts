@@ -1,14 +1,21 @@
 // services/skills.service.ts
 import { api } from "@/lib/axios";
 
-export const skillsService = {
-  getSkills: async (filters?: {
+type GetSkillsFilters = {
     page?: number;
     limit?: number;
     search?: string;
     category?: string;
-  }) => {
+};
+
+export const skillsService = {
+  getSkills: async (filters: GetSkillsFilters) => {
     const response = await api.get("/admin/skills", { params: filters });
+    return response;
+  },
+
+  getSkillsforUser: async (filters?: GetSkillsFilters) => {
+    const response = await api.get("/user/skills", { params: filters });
     return response;
   },
 

@@ -70,9 +70,6 @@ export default function SkillsManager() {
         category: selectedCategory || undefined,
       });
 
-      console.log("=== RAW RESPONSE FROM API (skills) ===");
-      console.log(response.data);
-
       const res = response.data || {};
 
       // Data luôn là mảng
@@ -100,10 +97,7 @@ export default function SkillsManager() {
       setSkills(data);
       setPagination({ page, limit, total, totalPages });
 
-      console.log("=== PAGINATION STATE SAU KHI XỬ LÝ ===");
-      console.log({ page, limit, total, totalPages, dataLength: data.length });
     } catch (err) {
-      console.error("Failed to fetch skills", err);
       setSkills([]);
       setPagination({ page: 1, limit: pagination.limit, total: 0, totalPages: 1 });
       alert("Failed to load skills. Please try again.");

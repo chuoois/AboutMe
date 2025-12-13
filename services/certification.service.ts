@@ -1,16 +1,23 @@
 // services/certification.service.ts
 import { api } from "@/lib/axios";
 
+type GetCertificatesFilters = {
+  page?: number;
+  limit?: number;
+  search?: string;
+  issuer?: string;
+  startDate?: string;
+  endDate?: string;
+};
+
 export const certificationService = {
-  getCertificates: async (filters?: {
-    page?: number;
-    limit?: number;
-    search?: string;
-    issuer?: string;
-    startDate?: string;
-    endDate?: string;
-  }) => {
+  getCertificates: async (filters: GetCertificatesFilters) => {
     const response = await api.get("/admin/certification", { params: filters });
+    return response;
+  },
+
+  getCertificatesforUser: async (filters?: GetCertificatesFilters) => {
+    const response = await api.get("/user/certification", { params: filters });
     return response;
   },
 
@@ -34,6 +41,7 @@ export const certificationService = {
 
   // Xóa certificate
   deleteCertificate: async (id: number) => {
-    return api.delete(`/admin/certification/${id}`); 
+    return api.delete(`/admin/certification/${id}`);
   },
+
 };

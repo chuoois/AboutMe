@@ -55,7 +55,7 @@ export default function RootLayout({
           {children}
         </main>
         <div className="relative z-40">
-          <MusicPlayer />
+          {/* <MusicPlayer /> */}
         </div>
         <div className="relative z-50">
           <MenuBar />
