@@ -9,9 +9,10 @@ export const generateTokens = async (
   manager: EntityManager
 ) => {
   // 1. Tạo JWT Strings
-  const accessToken = sign({ id: adminId, email }, process.env.JWT_SECRET!, { expiresIn: "15m" });
+  const accessToken = sign({ id: adminId, email }, process.env.JWT_SECRET!, { expiresIn: "5m" });
   const refreshToken = sign({ id: adminId }, process.env.JWT_REFRESH_SECRET!, { expiresIn: "7d" });
-  // 3. Lưu Refresh Token vào DB
+
+  // 2. Lưu Refresh Token vào DB
   const rtEntity = manager.create(RefreshToken, {
     adminId: adminId,
     token: refreshToken,

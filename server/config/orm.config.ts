@@ -12,4 +12,6 @@ export const dbOptions: DataSourceOptions = {
   entities: ENTITIES,
   charset: "utf8mb4",
   timezone: "+07:00",
+  synchronize: process.env.NODE_ENV !== "production",
+  logging: process.env.NODE_ENV !== "production",
 };

@@ -1,4 +1,4 @@
-import UserProfile from '@/components/UserProfile';
+import UserProfile from '@/components/profile-user-components/UserProfile';
 
 export default function HomePage() {
   return <UserProfile />;

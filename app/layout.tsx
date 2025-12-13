@@ -1,12 +1,17 @@
 import type { Metadata, Viewport } from "next";
 import "@/styles/globals.css";
-import MenuBar from "@/components/macos/MenuBar";
-import Dock from "@/components/macos/Dock";
-import MusicPlayer from "@/components/macos/MusicPlayer";
+import MenuBar from "@/components/macos-components/MenuBar";
+import Dock from "@/components/macos-components/Dock";
+import MusicPlayer from "@/components/macos-components/MusicPlayer";
 import { Inter } from "next/font/google";
 import { IMG_LINKS } from "@/constants/img";
 
-const inter = Inter({ subsets: ["latin"] });
+// 1. Cấu hình Font: Khai báo variable để dùng trong Tailwind
+const inter = Inter({
+  subsets: ["latin"],
+  variable: '--font-inter',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: "Thinh.Dev | macOS Portfolio",
@@ -32,26 +37,31 @@ export default function RootLayout({
   const wallpaperUrl = IMG_LINKS.mac_os;
 
   return (
-    <html lang="en" className={`${inter.className} antialiased`}>
+    <html lang="en" className={`${inter.variable} antialiased`}>
       <head>
         <link
           href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
           rel="stylesheet"
         />
       </head>
-      <body className="h-dvh w-screen overflow-hidden bg-black text-white selection:bg-[#007AFF]/40 relative font-sans overscroll-none">
+      <body className="h-dvh w-screen overflow-hidden bg-black text-mac-light-text dark:text-mac-dark-text selection:bg-mac-system-blue/40 relative font-sans overscroll-none">
         <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0 transition-all duration-700 ease-in-out transform scale-105 animate-wallpaper-zoom"
+          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat transition-transform duration-[2s] ease-out hover:scale-105"
           style={{ backgroundImage: `url('${wallpaperUrl}')` }}
         >
-          <div className="absolute inset-0 bg-black/10 backdrop-blur-[0px]" />
+          <div className="absolute inset-0 bg-black/10 dark:bg-black/30 backdrop-blur-[0px]" />
         </div>
-        <main>
+        <main className="relative z-10 w-full h-full pt-9 pb-24 overflow-hidden">
           {children}
         </main>
-        <MusicPlayer />
-        <MenuBar />
-        <Dock />
+        <div className="relative z-40">
+          <MusicPlayer />
+        </div>
+        <div className="relative z-50">
+          <MenuBar />
+          <Dock />
+        </div>
+
       </body>
     </html>
   );
