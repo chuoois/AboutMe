@@ -47,7 +47,7 @@ export default function Projects() {
     const loadRepos = async () => {
       setLoading(true);
       try {
-        const response = await projectsService.getProjects({
+        const response = await projectsService.getProjectsforUser({
           page: pagination.page,
           limit: pagination.limit,
           search: debouncedSearchQuery || undefined,
