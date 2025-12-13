@@ -1,50 +1,60 @@
 "use client";
-
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { authService } from "@/services/auth.service";
 
 // --- MENU DATA ---
 const MENU_ITEMS = [
-  { 
-    id: 'projects', 
-    label: 'Projects', 
-    icon: 'bxs-folder-open', 
-    color: 'bg-gradient-to-br from-green-400 to-emerald-500', 
-    link: '/settings/projects-manager' 
+  {
+    id: 'projects',
+    label: 'Projects',
+    icon: 'bxs-folder-open',
+    color: 'bg-gradient-to-br from-green-400 to-emerald-500',
+    link: '/settings/projects-manager'
   },
-  { 
-    id: 'skills', 
-    label: 'Skills', 
-    icon: 'bxs-graduation', 
-    color: 'bg-gradient-to-br from-purple-500 to-indigo-600', 
-    link: '/settings/skills-manager' 
+  {
+    id: 'skills',
+    label: 'Skills',
+    icon: 'bxs-graduation',
+    color: 'bg-gradient-to-br from-purple-500 to-indigo-600',
+    link: '/settings/skills-manager'
   },
-  { 
-    id: 'certification', 
-    label: 'Certifications', 
-    icon: 'bxs-certification', 
-    color: 'bg-gradient-to-br from-red-500 to-pink-600', 
-    link: '/settings/certifications-manager' 
+  {
+    id: 'certification',
+    label: 'Certifications',
+    icon: 'bxs-certification',
+    color: 'bg-gradient-to-br from-red-500 to-pink-600',
+    link: '/settings/certifications-manager'
   }
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
 
+  const handleLogout = async () => {
+    try {
+      await authService.logout(); // Gọi hàm logout bạn cung cấp
+    } catch (error) {
+      console.error("Logout error", error);
+      // Vẫn redirect về login dù có lỗi API
+      if (typeof window !== "undefined") {
+        window.location.href = "/login";
+      }
+    }
+  };
+
   return (
     <aside className="
       w-[260px] md:w-[280px] flex flex-col h-full select-none shrink-0
-      bg-[#262626]/95 backdrop-blur-2xl 
+      bg-[#262626]/95 backdrop-blur-2xl
       border-r border-black/20
     ">
-
       {/* --- HEADER: TITLE (Thay cho Search Bar) --- */}
       <div className="px-6 pt-10 pb-4">
         <h1 className="text-2xl font-bold text-white tracking-tight">
           Settings
         </h1>
       </div>
-
       {/* --- APPLE ID PROFILE --- */}
       <div className="px-3 mb-4">
         <div className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 transition-colors cursor-default group">
@@ -65,16 +75,13 @@ export default function Sidebar() {
           </div>
         </div>
       </div>
-
       {/* --- SCROLLABLE MENU --- */}
       <nav className="flex-1 overflow-y-auto px-3 space-y-[2px] pb-4 no-scrollbar">
         {MENU_ITEMS.map((item) => {
           const isActive = pathname === item.link;
           const isExternal = item.link.startsWith('http');
-
           const LinkComponent = isExternal ? 'a' : Link;
           const linkProps = isExternal ? { href: item.link, target: '_blank', rel: 'noopener noreferrer' } : { href: item.link };
-
           return (
             <LinkComponent
               key={item.id}
@@ -95,12 +102,10 @@ export default function Sidebar() {
                 <div className="absolute inset-0 rounded-[6px] bg-gradient-to-b from-white/30 to-transparent opacity-30"></div>
                 <i className={`bx ${item.icon} text-[14px] text-white relative z-10 drop-shadow-sm`}></i>
               </div>
-
               {/* Text Label */}
               <span className="truncate tracking-wide flex-1">
                 {item.label}
               </span>
-
               {isExternal && (
                 <i className='bx bx-link-external text-[10px] opacity-50'></i>
               )}
@@ -108,6 +113,22 @@ export default function Sidebar() {
           );
         })}
       </nav>
+
+      {/* --- LOGOUT BUTTON (thêm vào trước footer hoặc thay thế footer nếu muốn) --- */}
+      <div className="px-3 pb-4">
+        <button
+          onClick={handleLogout}
+          className="w-full group flex items-center gap-3 px-3 py-1.5 rounded-[6px] transition-all duration-200 text-[13px]
+                     text-gray-300 hover:bg-white/5 hover:text-white"
+        >
+          {/* ICON LOGOUT */}
+          <div className="relative w-6 h-6 flex items-center justify-center shrink-0 rounded-[6px] shadow-sm bg-gradient-to-br from-orange-500 to-red-600">
+            <div className="absolute inset-0 rounded-[6px] bg-gradient-to-b from-white/30 to-transparent opacity-30"></div>
+            <i className="bx bx-log-out text-[14px] text-white relative z-10 drop-shadow-sm"></i>
+          </div>
+          <span className="truncate tracking-wide flex-1">Logout</span>
+        </button>
+      </div>
 
       {/* --- FOOTER --- */}
       <div className="px-5 py-4 border-t border-white/5 bg-transparent">
