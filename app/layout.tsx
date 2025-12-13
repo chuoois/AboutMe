@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "@/styles/globals.css";
 import MenuBar from "@/components/macos-components/MenuBar";
 import Dock from "@/components/macos-components/Dock";
-import MusicPlayer from "@/components/macos-components/MusicPlayer";
+// import MusicPlayer from "@/components/macos-components/MusicPlayer";
 import { Inter } from "next/font/google";
 import { IMG_LINKS } from "@/constants/img";
 
