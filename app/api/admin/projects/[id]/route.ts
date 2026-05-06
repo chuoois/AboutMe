@@ -30,11 +30,11 @@ export async function GET(
     );
   }
 
-  return withAuth(req, async (request, adminId) => {
+  return withAuth(req, async () => {
     try {
       const project = await ProjectsController.getProject(validation.id!);
       return NextResponse.json(project);
-    } catch (error: any) {
+    } catch (error) {
       if (error.message === "Project not found") {
         return NextResponse.json(
           { error: "Project not found" },
@@ -68,12 +68,12 @@ export async function PUT(
     );
   }
 
-  return withAuth(req, async (request, adminId) => {
+  return withAuth(req, async (request) => {
     try {
       const body = await request.json();
       const updated = await ProjectsController.updateProject(validation.id!, body);
       return NextResponse.json(updated);
-    } catch (error: any) {
+    } catch (error) {
       if (error.message === "Project not found") {
         return NextResponse.json(
           { error: "Project not found" },
@@ -107,11 +107,11 @@ export async function DELETE(
     );
   }
 
-  return withAuth(req, async (request, adminId) => {
+  return withAuth(req, async () => {
     try {
       const result = await ProjectsController.deleteProject(validation.id!);
       return NextResponse.json(result, { status: 200 });
-    } catch (error: any) {
+    } catch (error) {
       if (error.message === "Project not found") {
         return NextResponse.json(
           { error: "Project not found" },

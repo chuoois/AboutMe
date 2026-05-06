@@ -1,47 +1,35 @@
 // services/certification.service.ts
 import { api } from "@/lib/axios";
+import type { PaginationFilters } from "@/types";
 
-type GetCertificatesFilters = {
-  page?: number;
-  limit?: number;
-  search?: string;
+export type CertFilters = PaginationFilters & {
   issuer?: string;
   startDate?: string;
   endDate?: string;
 };
 
 export const certificationService = {
-  getCertificates: async (filters: GetCertificatesFilters) => {
-    const response = await api.get("/admin/certification", { params: filters });
-    return response;
+  getCertificates: async (filters: CertFilters) => {
+    return api.get("/admin/certification", { params: filters });
   },
 
-  getCertificatesforUser: async (filters?: GetCertificatesFilters) => {
-    const response = await api.get("/user/certification", { params: filters });
-    return response;
+  getCertificatesForUser: async (filters?: CertFilters) => {
+    return api.get("/user/certification", { params: filters });
   },
 
-  // Tạo certificate mới
-  createCertificate: async (data: any) => {
-    const response = await api.post("/admin/certification", data);
-    return response;
+  createCertificate: async (data: Record<string, unknown>) => {
+    return api.post("/admin/certification", data);
   },
 
-  // Lấy certificate theo id
   getCertificateById: async (id: number) => {
-    const response = await api.get(`/admin/certification/${id}`);
-    return response;
+    return api.get(`/admin/certification/${id}`);
   },
 
-  // Cập nhật certificate
-  updateCertificate: async (id: number, data: any) => {
-    const response = await api.put(`/admin/certification/${id}`, data);
-    return response;
+  updateCertificate: async (id: number, data: Record<string, unknown>) => {
+    return api.put(`/admin/certification/${id}`, data);
   },
 
-  // Xóa certificate
   deleteCertificate: async (id: number) => {
     return api.delete(`/admin/certification/${id}`);
   },
-
 };

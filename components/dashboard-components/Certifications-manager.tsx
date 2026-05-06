@@ -1,52 +1,21 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { certificationService } from "@/services/certification.service";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useCachedFetch } from "@/hooks/useCachedFetch";
 
-// --- TYPE DEFINITIONS ---
-type Cert = {
-  id: number;
-  coursera_name: string;
-  specialization?: string;
-  icon: string;
-  color: string;
-  issuer: string;
-  issue_date: string;
-  credential_url: string;
-  description: string;
-};
-
-type Pagination = {
-  page: number;
-  limit: number;
-  total: number;
-  totalPages: number;
-};
-
-// --- HELPER FORMAT DATE ---
-const formatDate = (dateString: string) => {
-  if (!dateString) return "N/A";
-  const date = new Date(dateString);
-  return new Intl.DateTimeFormat('en-US', { month: 'short', year: 'numeric' }).format(date);
-};
+import type { Cert } from "@/types";
+import { formatDate } from "@/lib/helpers/date";
+import { getErrorMessage } from "@/lib/utils/common";
 
 export default function CertificationsManager() {
-  const [certs, setCerts] = useState<Cert[]>([]);
-  const [pagination, setPagination] = useState<Pagination>({
-    page: 1,
-    limit: 10,
-    total: 0,
-    totalPages: 1,
-  });
-
   // State cho input tìm kiếm
   const [searchQuery, setSearchQuery] = useState("");
   // Debounce giá trị search (chỉ gọi API khi ngừng gõ 500ms)
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
-  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
@@ -67,45 +36,39 @@ export default function CertificationsManager() {
   });
 
   // --- FETCH CERTIFICATES ---
-  const fetchCertificates = useCallback(async () => {
-    setLoading(true);
-    try {
-      const response = await certificationService.getCertificates({
-        page: pagination.page,
-        limit: pagination.limit,
-        search: debouncedSearchQuery || undefined,
-      });
-
-      const { data, pagination: pag } = response.data;
-      setCerts(data);
-
-      // FIX: Đảm bảo totalPages luôn có giá trị đúng
-      const total = pag.total ?? 0;
-      const limit = pag.limit ?? pagination.limit;
-      const calculatedTotalPages = pag.totalPages ?? Math.ceil(total / limit);
-
-      setPagination({
-        page: pag.page ?? pagination.page,
-        limit,
-        total,
-        totalPages: calculatedTotalPages,
-      });
-    } catch (err) {
-      console.error("Failed to fetch certificates", err);
-      alert("Failed to load certifications. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  }, [pagination.page, pagination.limit, debouncedSearchQuery]);
-
-  useEffect(() => {
-    fetchCertificates();
-  }, [fetchCertificates]);
+  const [page, setPage] = useState(1);
+  const limit = 10;
 
   // Reset page về 1 khi search thay đổi (debounced)
-  useEffect(() => {
-    setPagination(prev => ({ ...prev, page: 1 }));
-  }, [debouncedSearchQuery]);
+  const [prevSearch, setPrevSearch] = useState(debouncedSearchQuery);
+  if (debouncedSearchQuery !== prevSearch) {
+    setPrevSearch(debouncedSearchQuery);
+    setPage(1);
+  }
+
+  const { data: fetchResult, loading, isRefreshing, refetch } = useCachedFetch({
+    key: `admin_certs_p${page}_l${limit}_s${debouncedSearchQuery}`,
+    fetcher: async () => {
+      const response = await certificationService.getCertificates({
+        page,
+        limit,
+        search: debouncedSearchQuery || undefined,
+      });
+      return response.data;
+    }
+  });
+
+  const isLoading = loading && !isRefreshing;
+
+  const res = fetchResult || {};
+  const certs = Array.isArray(res.data) ? res.data : [];
+  
+  let total = 0;
+  let totalPages = 1;
+  if (res.pagination) {
+    total = res.pagination.total ?? 0;
+    totalPages = res.pagination.totalPages ?? Math.ceil(total / limit);
+  }
 
   // --- HANDLERS ---
   const openModal = (cert?: Cert) => {
@@ -143,10 +106,9 @@ export default function CertificationsManager() {
         await certificationService.createCertificate(formData);
       }
       setIsModalOpen(false);
-      await fetchCertificates();
+      await refetch();
     } catch (err) {
-      console.error("Save failed", err);
-      alert("Failed to save certification. Please try again.");
+      alert(getErrorMessage(err));
     } finally {
       setSaving(false);
     }
@@ -158,18 +120,17 @@ export default function CertificationsManager() {
     setDeletingId(id);
     try {
       await certificationService.deleteCertificate(id);
-      await fetchCertificates();
+      await refetch();
     } catch (err) {
-      console.error("Delete failed", err);
-      alert("Failed to delete certification.");
+      alert(getErrorMessage(err));
     } finally {
       setDeletingId(null);
     }
   };
 
-  const goToPage = (page: number) => {
-    if (page >= 1 && page <= pagination.totalPages) {
-      setPagination(prev => ({ ...prev, page }));
+  const goToPage = (newPage: number) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
     }
   };
 
@@ -211,7 +172,7 @@ export default function CertificationsManager() {
       {/* --- TABLE CONTENT --- */}
       <div className="flex-1 overflow-hidden rounded-xl border border-white/10 bg-[#1e1e1e] shadow-inner">
         <div className="overflow-y-auto h-full custom-scrollbar">
-          {loading ? (
+          {isLoading ? (
             <div className="p-12 text-center text-gray-500">
               <i className='bx bx-loader-alt animate-spin text-4xl block mb-4'></i>
               Loading certifications...
@@ -293,20 +254,20 @@ export default function CertificationsManager() {
         </div>
 
         {/* --- PAGINATION --- */}
-        {!loading && pagination.totalPages > 1 && (
+        {!isLoading && totalPages > 1 && (
           <div className="px-4 py-3 border-t border-white/10 bg-[#252525] flex items-center justify-between text-sm text-gray-400">
-            <span>Page {pagination.page} of {pagination.totalPages} ({pagination.total} total)</span>
+            <span>Page {page} of {totalPages} ({total} total)</span>
             <div className="flex gap-2">
               <button
-                onClick={() => goToPage(pagination.page - 1)}
-                disabled={pagination.page === 1}
+                onClick={() => goToPage(page - 1)}
+                disabled={page === 1}
                 className="px-3 py-1 rounded bg-[#2a2a2a] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white/10 transition-colors"
               >
                 Previous
               </button>
               <button
-                onClick={() => goToPage(pagination.page + 1)}
-                disabled={pagination.page === pagination.totalPages}
+                onClick={() => goToPage(page + 1)}
+                disabled={page === totalPages}
                 className="px-3 py-1 rounded bg-[#2a2a2a] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white/10 transition-colors"
               >
                 Next

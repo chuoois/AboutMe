@@ -1,5 +1,5 @@
+import type { Admin } from "./admin.entity";
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from "typeorm";
-import { Admin } from "./admin.entity";
 
 @Entity("refresh_tokens")
 export class RefreshToken {
@@ -18,8 +18,7 @@ export class RefreshToken {
   @CreateDateColumn()
   created_at!: Date;
 
-  // --- SỬA Ở ĐÂY ---
-  @ManyToOne(() => Admin, (admin) => admin.refreshTokens, { onDelete: "CASCADE" })
+  @ManyToOne("Admin", "refreshTokens", { onDelete: "CASCADE" })
   @JoinColumn({ name: "admin_id" })
-  admin!: any; // Đổi thành any để tránh lỗi Circular Dependency
+  admin!: Admin;
 }

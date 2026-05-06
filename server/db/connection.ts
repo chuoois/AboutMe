@@ -8,7 +8,6 @@ export const getDataSource = async () => {
   if (!AppDataSource.isInitialized) {
     try {
       await AppDataSource.initialize();
-      console.log("TypeORM Data Source has been initialized!");
     } catch (err) {
       console.error("Error during Data Source initialization:", err);
       // Có thể throw lỗi để app crash nếu DB không kết nối được (fail-fast)
@@ -24,6 +23,5 @@ export const getDataSource = async () => {
 export const closeDataSource = async () => {
     if (AppDataSource.isInitialized) {
         await AppDataSource.destroy();
-        console.log("TypeORM Data Source has been closed!");
     }
 };

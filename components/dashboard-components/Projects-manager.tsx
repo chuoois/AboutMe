@@ -1,43 +1,19 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { projectsService } from "@/services/projects.service";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useCachedFetch } from "@/hooks/useCachedFetch";
 
-// --- TYPES ---
-type Project = {
-  id: number;
-  title: string;
-  icon: string;
-  color?: string;
-  description: string;
-  tags: string[];
-  git_url?: string;
-  live_demo_url?: string;
-};
-
-type Pagination = {
-  page: number;
-  limit: number;
-  total: number;
-  totalPages: number;
-};
+import type { Project } from "@/types";
+import { getErrorMessage } from "@/lib/utils/common";
 
 export default function ProjectManager() {
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [pagination, setPagination] = useState<Pagination>({
-    page: 1,
-    limit: 10,
-    total: 0,
-    totalPages: 1,
-  });
-
   // Search với debounce
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
-  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
@@ -58,58 +34,39 @@ export default function ProjectManager() {
   const [tagInput, setTagInput] = useState("");
 
   // --- FETCH PROJECTS ---
-  const fetchProjects = useCallback(async () => {
-    setLoading(true);
-    try {
-      const response = await projectsService.getProjects({
-        page: pagination.page,
-        limit: pagination.limit,
-        search: debouncedSearchQuery || undefined,
-      });
-
-      // ==== DEBUG LOG 1: Xem toàn bộ response từ API ====
-      console.log("=== RAW RESPONSE FROM API (projects) ===");
-      console.log(response.data);
-
-      const { data, pagination: pag } = response.data;
-      setProjects(data);
-
-      // FIX: Đảm bảo totalPages luôn đúng dù backend có trả về hay không
-      const total = pag.total ?? 0;
-      const limit = pag.limit ?? pagination.limit;
-      const calculatedTotalPages = pag.totalPages ?? Math.ceil(total / limit);
-
-      setPagination({
-        page: pag.page ?? pagination.page,
-        limit,
-        total,
-        totalPages: calculatedTotalPages,
-      });
-
-      // ==== DEBUG LOG 2: Xem trạng thái pagination sau khi set ====
-      console.log("=== PAGINATION STATE SAU KHI SET ===");
-      console.log({
-        page: pag.page ?? pagination.page,
-        limit,
-        total,
-        totalPages: calculatedTotalPages,
-      });
-    } catch (err) {
-      console.error("Failed to fetch projects", err);
-      alert("Failed to load projects. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  }, [pagination.page, pagination.limit, debouncedSearchQuery]);
-
-  useEffect(() => {
-    fetchProjects();
-  }, [fetchProjects]);
+  const [page, setPage] = useState(1);
+  const limit = 10;
 
   // Reset page khi search thay đổi
-  useEffect(() => {
-    setPagination(prev => ({ ...prev, page: 1 }));
-  }, [debouncedSearchQuery]);
+  const [prevSearch, setPrevSearch] = useState(debouncedSearchQuery);
+  if (debouncedSearchQuery !== prevSearch) {
+    setPrevSearch(debouncedSearchQuery);
+    setPage(1);
+  }
+
+  const { data: fetchResult, loading, isRefreshing, refetch } = useCachedFetch({
+    key: `admin_projects_p${page}_l${limit}_s${debouncedSearchQuery}`,
+    fetcher: async () => {
+      const response = await projectsService.getProjects({
+        page,
+        limit,
+        search: debouncedSearchQuery || undefined,
+      });
+      return response.data;
+    }
+  });
+
+  const isLoading = loading && !isRefreshing;
+
+  const res = fetchResult || {};
+  const projects = Array.isArray(res.data) ? res.data : [];
+  
+  let total = 0;
+  let totalPages = 1;
+  if (res.pagination) {
+    total = res.pagination.total ?? 0;
+    totalPages = res.pagination.totalPages ?? Math.ceil(total / limit);
+  }
 
   // --- HANDLERS ---
   const openModal = (project?: Project) => {
@@ -147,10 +104,9 @@ export default function ProjectManager() {
         await projectsService.createProject(formData);
       }
       setIsModalOpen(false);
-      await fetchProjects();
+      await refetch();
     } catch (err) {
-      console.error("Save failed", err);
-      alert("Failed to save project. Please try again.");
+      alert(getErrorMessage(err));
     } finally {
       setSaving(false);
     }
@@ -162,10 +118,9 @@ export default function ProjectManager() {
     setDeletingId(id);
     try {
       await projectsService.deleteProject(id);
-      await fetchProjects();
+      await refetch();
     } catch (err) {
-      console.error("Delete failed", err);
-      alert("Failed to delete project.");
+      alert(getErrorMessage(err));
     } finally {
       setDeletingId(null);
     }
@@ -192,9 +147,9 @@ export default function ProjectManager() {
     }));
   };
 
-  const goToPage = (page: number) => {
-    if (page >= 1 && page <= pagination.totalPages) {
-      setPagination(prev => ({ ...prev, page }));
+  const goToPage = (newPage: number) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
     }
   };
 
@@ -236,7 +191,7 @@ export default function ProjectManager() {
       {/* TABLE */}
       <div className="flex-1 overflow-hidden rounded-xl border border-white/10 bg-[#1e1e1e] shadow-inner">
         <div className="overflow-y-auto h-full custom-scrollbar">
-          {loading ? (
+          {isLoading ? (
             <div className="p-12 text-center text-gray-500">
               <i className="bx bx-loader-alt animate-spin text-4xl block mb-4"></i>
               Loading projects...
@@ -327,20 +282,20 @@ export default function ProjectManager() {
         </div>
 
         {/* PAGINATION */}
-        {!loading && pagination.totalPages > 1 && (
+        {!isLoading && totalPages > 1 && (
           <div className="px-4 py-3 border-t border-white/10 bg-[#252525] flex items-center justify-between text-sm text-gray-400">
-            <span>Page {pagination.page} of {pagination.totalPages} ({pagination.total} total)</span>
+            <span>Page {page} of {totalPages} ({total} total)</span>
             <div className="flex gap-2">
               <button
-                onClick={() => goToPage(pagination.page - 1)}
-                disabled={pagination.page === 1}
+                onClick={() => goToPage(page - 1)}
+                disabled={page === 1}
                 className="px-3 py-1 rounded bg-[#2a2a2a] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white/10 transition-colors"
               >
                 Previous
               </button>
               <button
-                onClick={() => goToPage(pagination.page + 1)}
-                disabled={pagination.page === pagination.totalPages}
+                onClick={() => goToPage(page + 1)}
+                disabled={page === totalPages}
                 className="px-3 py-1 rounded bg-[#2a2a2a] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white/10 transition-colors"
               >
                 Next

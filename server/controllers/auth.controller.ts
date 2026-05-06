@@ -122,7 +122,7 @@ export const AuthController = {
     
     try {
       verify(oldRefreshToken, process.env.JWT_REFRESH_SECRET!);
-    } catch (err) {
+    } catch {
       throw new Error("INVALID_REFRESH_TOKEN");
     }
     
@@ -152,16 +152,12 @@ export const AuthController = {
   // ==========================================
   // 4. LOGOUT
   // ==========================================
-  logout: async (refreshToken?: string, deviceToken?: string) => {
+  logout: async (refreshToken?: string) => {
     const dataSource = await getDataSource();
     await dataSource.transaction(async (manager) => {
       if (refreshToken) {
         await manager.delete(RefreshToken, { token: refreshToken });
       }
-      // Tùy chọn: Không nhất thiết phải xóa deviceToken khi logout, trừ khi user muốn "Quên thiết bị này"
-      // if (deviceToken) {
-      //   await manager.delete(TrustedDevice, { device_token: deviceToken });
-      // }
     });
     return { message: "Logged out" };
   }

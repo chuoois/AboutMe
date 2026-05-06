@@ -2,13 +2,12 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { AuthController } from "@/server/controllers/auth.controller";
 
-export async function POST(req: Request) {
+export async function POST() {
   try {
     const cookieStore = await cookies();
     const refreshToken = cookieStore.get("refresh_token")?.value;
-    const deviceToken = cookieStore.get("device_token")?.value;
     if (refreshToken) {
-        await AuthController.logout(refreshToken, deviceToken);
+        await AuthController.logout(refreshToken);
     }
     const res = NextResponse.json({
       status: "LOGGED_OUT",
@@ -22,10 +21,11 @@ export async function POST(req: Request) {
 
     return res;
 
-  } catch (error: any) {
+  } catch (error) {
     console.error("Logout Error:", error);
+    const message = error instanceof Error ? error.message : "Logout failed";
     const res = NextResponse.json(
-        { error: error.message || "Logout failed" }, 
+        { error: message }, 
         { status: 500 }
     );
     // Dù logout thất bại, vẫn xóa cookie trên client để tránh trạng thái không đồng bộ

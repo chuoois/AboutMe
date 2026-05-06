@@ -43,7 +43,8 @@ export async function POST(req: Request) {
 
     return res;
 
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 400 });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Verification failed";
+    return NextResponse.json({ error: message }, { status: 400 });
   }
 }

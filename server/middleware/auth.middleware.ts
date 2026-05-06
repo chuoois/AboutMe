@@ -5,14 +5,10 @@ import { RefreshToken } from "@/server/entities/refresh_tokens.entity";
 
 export async function withAuth(
   request: NextRequest,
-  handler: (req: NextRequest, adminId: number) => Promise<any>
+  handler: (req: NextRequest, adminId: number) => Promise<unknown>
 ) {
   const accessToken = request.cookies.get("access_token")?.value;
   const refreshToken = request.cookies.get("refresh_token")?.value;
-
-  console.log("Cookies object:", request.cookies);
-  console.log("Access token:", accessToken);
-  console.log("Refresh token:", refreshToken);
 
   const dataSource = await getDataSource();
 
@@ -22,9 +18,9 @@ export async function withAuth(
   if (accessToken) {
     try {
       const decoded = verify(accessToken, process.env.JWT_SECRET!) as JwtPayload;
-      const adminId = (decoded as any).id;
+      const adminId = (decoded as { id: number }).id;
       return await handler(request, adminId);
-    } catch (err) {
+    } catch {
       // Access token hết hạn -> dùng refresh token
     }
   }
@@ -38,9 +34,6 @@ export async function withAuth(
 
   try {
     // Verify refresh token signature
-    const decoded = verify(refreshToken, process.env.JWT_REFRESH_SECRET!) as JwtPayload;
-    const adminId = (decoded as any).id;
-
     // Check token trong DB
     const rtRepo = dataSource.getRepository(RefreshToken);
     const existingToken = await rtRepo.findOne({ where: { token: refreshToken }, relations: ["admin"] });
@@ -82,8 +75,7 @@ export async function withAuth(
 
     return response;
 
-  } catch (err) {
-    console.log("withAuth error:", err);
+  } catch {
     return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
   }
 }

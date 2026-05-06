@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import MacWindow from "@/components/macos-components/MacWindow";
-import Sidebar from "@/components/dashboard-components/Sidebar";
+import MacWindow from "@/components/layout/MacWindow";
+import Sidebar from "@/components/layout/Sidebar";
 
 export default function DashboardLayout({
   children,
@@ -16,9 +16,7 @@ export default function DashboardLayout({
         className="w-full h-full max-w-[1200px] max-h-[800px] shadow-2xl overflow-hidden border border-white/10"
       >
         <div className="flex h-full w-full">
-          {/* Sidebar */}
           <Sidebar />
-          {/* Main Content */}
           <main className="flex-1 overflow-y-auto min-w-0 p-8 
                            bg-[#1e1e1e]/95 backdrop-blur-3xl
                            text-white no-scrollbar">

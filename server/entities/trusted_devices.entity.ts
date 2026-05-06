@@ -1,5 +1,5 @@
+import type { Admin } from "./admin.entity";
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from "typeorm";
-import { Admin } from "./admin.entity";
 
 @Entity("trusted_devices")
 export class TrustedDevice {
@@ -21,8 +21,7 @@ export class TrustedDevice {
   @CreateDateColumn()
   created_at!: Date;
 
-  // --- SỬA Ở ĐÂY ---
-  @ManyToOne(() => Admin, (admin) => admin.trustedDevices, { onDelete: "CASCADE" })
+  @ManyToOne("Admin", "trustedDevices", { onDelete: "CASCADE" })
   @JoinColumn({ name: "admin_id" })
-  admin!: any; // Đổi thành any
+  admin!: Admin;
 }

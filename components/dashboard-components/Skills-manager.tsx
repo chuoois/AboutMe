@@ -1,42 +1,19 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { skillsService } from "@/services/skills.service";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useCachedFetch } from "@/hooks/useCachedFetch";
 
-// --- TYPE DEFINITIONS ---
-type Skill = {
-  id: number;
-  category: string;
-  skill_name: string;
-  icon: string | null;
-  color: string | null;
-  created_at: string;
-};
-
-type Pagination = {
-  page: number;
-  limit: number;
-  total: number;
-  totalPages: number;
-};
+import type { Skill } from "@/types";
+import { getErrorMessage } from "@/lib/utils/common";
 
 export default function SkillsManager() {
-  const [skills, setSkills] = useState<Skill[]>([]);
-  const [pagination, setPagination] = useState<Pagination>({
-    page: 1,
-    limit: 6,
-    total: 0,
-    totalPages: 1,
-  });
-
-  // Search + Filter state
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
-  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
@@ -52,6 +29,37 @@ export default function SkillsManager() {
     color: "text-white",
   });
 
+
+  const [page, setPage] = useState(1);
+  const limit = 6;
+
+  // Reset page khi search/filter thay đổi
+  const [prevSearch, setPrevSearch] = useState(debouncedSearchQuery);
+  const [prevCat, setPrevCat] = useState(selectedCategory);
+  if (debouncedSearchQuery !== prevSearch || selectedCategory !== prevCat) {
+    setPrevSearch(debouncedSearchQuery);
+    setPrevCat(selectedCategory);
+    setPage(1);
+  }
+
+  const { data: fetchResult, loading, isRefreshing, refetch } = useCachedFetch({
+    key: `admin_skills_p${page}_l${limit}_s${debouncedSearchQuery}_c${selectedCategory}`,
+    fetcher: async () => {
+      const response = await skillsService.getSkills({
+        page,
+        limit,
+        search: debouncedSearchQuery || undefined,
+        category: selectedCategory || undefined,
+      });
+      return response.data;
+    }
+  });
+
+  const isLoading = loading && !isRefreshing;
+
+  const res = fetchResult || {};
+  const skills: Skill[] = useMemo(() => Array.isArray(res.data) ? res.data : [], [res.data]);
+
   // Derived: Danh sách category duy nhất (an toàn)
   const uniqueCategories = useMemo(() => {
     if (!Array.isArray(skills) || skills.length === 0) return [];
@@ -59,61 +67,15 @@ export default function SkillsManager() {
     return cats.sort();
   }, [skills]);
 
-  // --- FETCH SKILLS (AN TOÀN + DEBUG) ---
-  const fetchSkills = useCallback(async () => {
-    setLoading(true);
-    try {
-      const response = await skillsService.getSkills({
-        page: pagination.page,
-        limit: pagination.limit,
-        search: debouncedSearchQuery || undefined,
-        category: selectedCategory || undefined,
-      });
-
-      const res = response.data || {};
-
-      // Data luôn là mảng
-      const data: Skill[] = Array.isArray(res.data) ? res.data : [];
-
-      // Pagination an toàn
-      let page = pagination.page;
-      let limit = pagination.limit;
-      let total = 0;
-      let totalPages = 1;
-
-      if (res.pagination && typeof res.pagination === "object") {
-        const pag = res.pagination;
-        page = Number(pag.page) || page;
-        limit = Number(pag.limit) || limit;
-        total = Number(pag.total) || 0;
-        totalPages = Number(pag.totalPages) || (total > 0 ? Math.ceil(total / limit) : 1);
-      } else {
-        page = Number(res.page) || page;
-        limit = Number(res.limit) || limit;
-        total = Number(res.total) || 0;
-        totalPages = Number(res.totalPages) || (total > 0 ? Math.ceil(total / limit) : 1);
-      }
-
-      setSkills(data);
-      setPagination({ page, limit, total, totalPages });
-
-    } catch (err) {
-      setSkills([]);
-      setPagination({ page: 1, limit: pagination.limit, total: 0, totalPages: 1 });
-      alert("Failed to load skills. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  }, [pagination.page, pagination.limit, debouncedSearchQuery, selectedCategory]);
-
-  useEffect(() => {
-    fetchSkills();
-  }, [fetchSkills]);
-
-  // Reset page khi search/filter thay đổi
-  useEffect(() => {
-    setPagination((prev) => ({ ...prev, page: 1 }));
-  }, [debouncedSearchQuery, selectedCategory]);
+  let total = 0;
+  let totalPages = 1;
+  if (res.pagination && typeof res.pagination === "object") {
+    total = Number(res.pagination.total) || 0;
+    totalPages = Number(res.pagination.totalPages) || (total > 0 ? Math.ceil(total / limit) : 1);
+  } else {
+    total = Number(res.total) || 0;
+    totalPages = Number(res.totalPages) || (total > 0 ? Math.ceil(total / limit) : 1);
+  }
 
   // --- HANDLERS ---
   const openModal = (skill?: Skill) => {
@@ -152,10 +114,9 @@ export default function SkillsManager() {
         await skillsService.createSkill(formData);
       }
       setIsModalOpen(false);
-      await fetchSkills();
+      await refetch();
     } catch (err) {
-      console.error("Save failed", err);
-      alert("Failed to save skill. Please try again.");
+      alert(getErrorMessage(err));
     } finally {
       setSaving(false);
     }
@@ -167,23 +128,22 @@ export default function SkillsManager() {
     setDeletingId(id);
     try {
       await skillsService.deleteSkill(id);
-      await fetchSkills();
+      await refetch();
     } catch (err) {
-      console.error("Delete failed", err);
-      alert("Failed to delete skill.");
+      alert(getErrorMessage(err));
     } finally {
       setDeletingId(null);
     }
   };
 
-  const goToPage = (page: number) => {
-    if (page >= 1 && page <= pagination.totalPages) {
-      setPagination((prev) => ({ ...prev, page }));
+  const goToPage = (newPage: number) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
     }
   };
 
   // Kiểm tra có cần hiển thị pagination không
-  const showPagination = !loading && pagination.total > pagination.limit;
+  const showPagination = !isLoading && total > limit;
 
   return (
     <div className="flex flex-col h-full relative">
@@ -237,7 +197,7 @@ export default function SkillsManager() {
       <div className="flex-1 flex flex-col rounded-xl border border-white/10 bg-[#1e1e1e] shadow-inner">
         {/* Scrollable Table */}
         <div className="flex-1 overflow-y-auto custom-scrollbar">
-          {loading ? (
+          {isLoading ? (
             <div className="p-12 text-center text-gray-500">
               <i className="bx bx-loader-alt animate-spin text-4xl block mb-4"></i>
               Loading skills...
@@ -320,19 +280,19 @@ export default function SkillsManager() {
         {showPagination && (
           <div className="shrink-0 px-4 py-3 border-t border-white/10 bg-[#252525] flex items-center justify-between text-sm text-gray-400">
             <span>
-              Page {pagination.page} of {pagination.totalPages} ({pagination.total} total)
+              Page {page} of {totalPages} ({total} total)
             </span>
             <div className="flex gap-2">
               <button
-                onClick={() => goToPage(pagination.page - 1)}
-                disabled={pagination.page === 1}
+                onClick={() => goToPage(page - 1)}
+                disabled={page === 1}
                 className="px-3 py-1 rounded bg-[#2a2a2a] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white/10 transition-colors"
               >
                 Previous
               </button>
               <button
-                onClick={() => goToPage(pagination.page + 1)}
-                disabled={pagination.page === pagination.totalPages}
+                onClick={() => goToPage(page + 1)}
+                disabled={page === totalPages}
                 className="px-3 py-1 rounded bg-[#2a2a2a] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white/10 transition-colors"
               >
                 Next

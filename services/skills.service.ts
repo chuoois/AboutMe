@@ -1,43 +1,32 @@
 // services/skills.service.ts
 import { api } from "@/lib/axios";
+import type { PaginationFilters } from "@/types";
 
-type GetSkillsFilters = {
-    page?: number;
-    limit?: number;
-    search?: string;
-    category?: string;
+export type SkillFilters = PaginationFilters & {
+  category?: string;
 };
 
 export const skillsService = {
-  getSkills: async (filters: GetSkillsFilters) => {
-    const response = await api.get("/admin/skills", { params: filters });
-    return response;
+  getSkills: async (filters: SkillFilters) => {
+    return api.get("/admin/skills", { params: filters });
   },
 
-  getSkillsforUser: async (filters?: GetSkillsFilters) => {
-    const response = await api.get("/user/skills", { params: filters });
-    return response;
+  getSkillsForUser: async (filters?: SkillFilters) => {
+    return api.get("/user/skills", { params: filters });
   },
 
-  // Tạo skill mới
-  createSkill: async (data: any) => {
-    const response = await api.post("/admin/skills", data);
-    return response;
+  createSkill: async (data: Record<string, unknown>) => {
+    return api.post("/admin/skills", data);
   },
 
-  // Lấy skill theo id
   getSkillById: async (id: number) => {
-    const response = await api.get(`/admin/skills/${id}`);
-    return response;
+    return api.get(`/admin/skills/${id}`);
   },
 
-  // Cập nhật skill
-  updateSkill: async (id: number, data: any) => {
-    const response = await api.put(`/admin/skills/${id}`, data);
-    return response;
+  updateSkill: async (id: number, data: Record<string, unknown>) => {
+    return api.put(`/admin/skills/${id}`, data);
   },
 
-  // Xóa skill
   deleteSkill: async (id: number) => {
     return api.delete(`/admin/skills/${id}`);
   },

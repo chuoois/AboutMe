@@ -9,7 +9,7 @@ import { withAuth } from "@/server/middleware/auth.middleware";
 // =========================================
 //
 export async function GET(req: NextRequest) {
-  return withAuth(req, async (request, adminId) => {
+  return withAuth(req, async (request) => {
     const params = request.nextUrl.searchParams;
 
     const page = Number(params.get("page") || 1);
@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
 // =========================================
 //
 export async function POST(req: NextRequest) {
-  return withAuth(req, async (request, adminId) => {
+  return withAuth(req, async (request) => {
     const body = await request.json();
     const created = await SkillsController.createSkill(body);
     return NextResponse.json(created, { status: 201 });

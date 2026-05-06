@@ -1,47 +1,33 @@
 // services/projects.service.ts
 import { api } from "@/lib/axios";
+import type { PaginationFilters } from "@/types";
 
-// Định nghĩa type cho filters (tùy chọn, giúp code rõ ràng hơn)
-type GetProjectsFilters = {
-  page?: number;
-  limit?: number;
-  search?: string;
+export type ProjectFilters = PaginationFilters & {
   tag?: string;
 };
 
 export const projectsService = {
-  // Lấy danh sách projects + pagination + search + filter by tag
-  getProjects: async (filters?: GetProjectsFilters) => {
-    const response = await api.get("/admin/projects", { params: filters });
-    return response;
+  getProjects: async (filters?: ProjectFilters) => {
+    return api.get("/admin/projects", { params: filters });
   },
 
-  getProjectsforUser: async (filters?: GetProjectsFilters) => {
-    const response = await api.get("/user/projects", { params: filters });
-    return response;
+  getProjectsForUser: async (filters?: ProjectFilters) => {
+    return api.get("/user/projects", { params: filters });
   },
 
-  // Tạo project mới
-  createProject: async (data: any) => {
-    const response = await api.post("/admin/projects", data);
-    return response;
+  createProject: async (data: Record<string, unknown>) => {
+    return api.post("/admin/projects", data);
   },
 
-  // Lấy chi tiết 1 project theo id
   getProjectById: async (id: number) => {
-    const response = await api.get(`/admin/projects/${id}`);
-    return response;
+    return api.get(`/admin/projects/${id}`);
   },
 
-  // Cập nhật project
-  updateProject: async (id: number, data: any) => {
-    const response = await api.put(`/admin/projects/${id}`, data);
-    return response;
+  updateProject: async (id: number, data: Record<string, unknown>) => {
+    return api.put(`/admin/projects/${id}`, data);
   },
 
-  // Xóa project
   deleteProject: async (id: number) => {
-    const response = await api.delete(`/admin/projects/${id}`);
-    return response;
+    return api.delete(`/admin/projects/${id}`);
   },
 };

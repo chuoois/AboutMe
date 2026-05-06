@@ -1,6 +1,5 @@
+import type { Admin } from "./admin.entity"; 
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from "typeorm";
-import { Admin } from "./admin.entity"; 
-
 @Entity("otp_codes")
 export class OtpCode {
   @PrimaryGeneratedColumn()
@@ -18,11 +17,7 @@ export class OtpCode {
   @CreateDateColumn()
   created_at!: Date;
 
-  // --- SỬA Ở ĐÂY ---
-  // Giữ nguyên decorator, nó dùng lazy function () => Admin nên an toàn
-  @ManyToOne(() => Admin, (admin) => admin.otps, { onDelete: "CASCADE" })
+  @ManyToOne("Admin", "otps", { onDelete: "CASCADE" })
   @JoinColumn({ name: "admin_id" })
-  // Thay đổi 'admin!: Admin' thành 'admin!: any' 
-  // Điều này ngăn TypeScript emit metadata gây lỗi ReferenceError
-  admin!: any; 
+  admin!: Admin; 
 }

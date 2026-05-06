@@ -3,14 +3,11 @@ import { api } from "@/lib/axios";
 
 export const authService = {
   login: async (email: string, password: string) => {
-    const response = await api.post("/auth/login", { email, password });
-    return response;
+    return api.post("/auth/login", { email, password });
   },
   verifyOtp: async (email: string, code: string, remember: boolean = false) => {
-    const response = await api.post("/auth/verify-otp", { email, code, remember, });
-    return response;
+    return api.post("/auth/verify-otp", { email, code, remember });
   },
-
   logout: async () => {
     try {
       await api.post("/auth/logout");

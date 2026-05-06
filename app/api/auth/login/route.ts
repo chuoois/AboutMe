@@ -12,7 +12,12 @@ export async function POST(req: Request) {
     const deviceToken = cookieStore.get("device_token")?.value;
 
     // 2. Gọi Controller
-    const result: any = await AuthController.login(email, password, deviceToken);
+    const result = await AuthController.login(email, password, deviceToken) as { 
+      status: string; 
+      accessToken?: string; 
+      refreshToken?: string; 
+      email?: string;
+    };
 
     // 3. Trường hợp 1: Login thành công luôn (Trusted Device)
     if (result.status === "LOGIN_SUCCESS") {
@@ -48,7 +53,8 @@ export async function POST(req: Request) {
       email: result.email
     });
 
-  } catch (error: any) {
-    return NextResponse.json({ message: error.message }, { status: 400 });
+    } catch (error) {
+    const message = error instanceof Error ? error.message : "Login failed";
+    return NextResponse.json({ message }, { status: 400 });
   }
 }
