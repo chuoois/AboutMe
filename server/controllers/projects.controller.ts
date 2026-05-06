@@ -25,7 +25,8 @@ export const ProjectsController = {
 
     // Filter by tag (check if tag exists in JSON array)
     if (tag) {
-      qb.andWhere(":tag = ANY(project.tags)", { tag });
+      // MySQL syntax for JSON array contains
+      qb.andWhere("JSON_CONTAINS(project.tags, :tag)", { tag: JSON.stringify(tag) });
     }
 
     // Pagination + order by created_at DESC
@@ -35,6 +36,12 @@ export const ProjectsController = {
 
     const [data, total] = await qb.getManyAndCount();
 
+    // Map data to ensure it's fully serializable (convert Dates to ISO strings)
+    const serializedData = data.map(item => ({
+      ...item,
+      created_at: item.created_at?.toISOString(),
+    }));
+
     return {
       pagination: {
         page,
@@ -42,9 +49,10 @@ export const ProjectsController = {
         total,
         totalPages: Math.ceil(total / limit),
       },
-      data,
+      data: serializedData,
     };
   },
+
 
   // ================================
   // GET ONE PROJECT

@@ -15,15 +15,24 @@ export async function getProjectsForUser(
   filters: ProjectFilters = {}
 ): Promise<PaginatedResponse<Project>> {
   const page = filters.page || 1;
-  const limit = filters.limit || 10;
+  const limit = filters.limit || 6;
   const search = filters.search;
   const tag = filters.tag;
 
-  // Gọi trực tiếp controller để lấy dữ liệu từ DB (Server Component context)
-  // Việc này tránh được lỗi fetch đến localhost trong môi trường production
-  const result = await ProjectsController.getProjects(page, limit, search, tag);
-  
-  // Cast to expected type if necessary (Project entity vs Project type)
-  return result as unknown as PaginatedResponse<Project>;
+  try {
+    // Gọi trực tiếp controller để lấy dữ liệu từ DB (Server Component context)
+    const result = await ProjectsController.getProjects(page, limit, search, tag);
+    return result as unknown as PaginatedResponse<Project>;
+  } catch (error) {
+    // Log lỗi phía server (Vercel/hosting logs)
+    console.error("[getProjectsForUser] Database Error:", error);
+    
+    // Trả về dữ liệu trống thay vì làm crash cả Server Component render
+    return {
+      pagination: { page, limit, total: 0, totalPages: 0 },
+      data: [],
+    };
+  }
 }
+
 

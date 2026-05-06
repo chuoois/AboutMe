@@ -17,9 +17,17 @@ export async function getSkillsForUser(
   const search = filters.search;
   const category = filters.category;
 
-  // Gọi trực tiếp controller
-  const result = await SkillsController.getSkills(page, limit, search, category);
-  
-  return result as unknown as PaginatedResponse<Skill>;
+  try {
+    // Gọi trực tiếp controller
+    const result = await SkillsController.getSkills(page, limit, search, category);
+    return result as unknown as PaginatedResponse<Skill>;
+  } catch (error) {
+    console.error("[getSkillsForUser] Database Error:", error);
+    return {
+      pagination: { page, limit, total: 0, totalPages: 0 },
+      data: [],
+    };
+  }
 }
+
 

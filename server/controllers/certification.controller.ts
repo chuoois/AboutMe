@@ -39,6 +39,15 @@ export const CertificatesController = {
       .skip((page - 1) * limit)
       .take(limit);
     const [data, total] = await qb.getManyAndCount();
+
+    // Map data to ensure it's fully serializable
+    const serializedData = data.map(item => ({
+      ...item,
+      // Ensure Dates are converted to strings for safe RSC transfer
+      issue_date: item.issue_date instanceof Date ? item.issue_date.toISOString() : item.issue_date,
+      created_at: item.created_at?.toISOString(),
+    }));
+
     return {
       pagination: {
         page,
@@ -46,9 +55,10 @@ export const CertificatesController = {
         total,
         totalPages: Math.ceil(total / limit),
       },
-      data,
+      data: serializedData,
     };
   },
+
   // ================================
   // GET 1 CERTIFICATE
   // ================================

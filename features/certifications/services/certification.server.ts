@@ -17,9 +17,17 @@ export async function getCertificatesForUser(
   const search = filters.search;
   const issuer = filters.issuer;
 
-  // Gọi trực tiếp controller
-  const result = await CertificatesController.getCertificates(page, limit, search, issuer);
-  
-  return result as unknown as PaginatedResponse<Cert>;
+  try {
+    // Gọi trực tiếp controller
+    const result = await CertificatesController.getCertificates(page, limit, search, issuer);
+    return result as unknown as PaginatedResponse<Cert>;
+  } catch (error) {
+    console.error("[getCertificatesForUser] Database Error:", error);
+    return {
+      pagination: { page, limit, total: 0, totalPages: 0 },
+      data: [],
+    };
+  }
 }
+
 
