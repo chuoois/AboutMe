@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { certificationService } from "@/services/certification.service";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -46,19 +46,30 @@ export default function CertificationsManager() {
     setPage(1);
   }
 
-  const { data: fetchResult, loading, isRefreshing, refetch } = useCachedFetch({
-    key: `admin_certs_p${page}_l${limit}_s${debouncedSearchQuery}`,
-    fetcher: async () => {
-      const response = await certificationService.getCertificates({
-        page,
-        limit,
-        search: debouncedSearchQuery || undefined,
-      });
-      return response.data;
-    }
-  });
+  // 1. Setup fetch function with useCallback
+  const fetchCerts = useCallback(async () => {
+    const response = await certificationService.getCertificates({
+      page,
+      limit,
+      search: debouncedSearchQuery || undefined,
+    });
+    return response.data;
+  }, [page, limit, debouncedSearchQuery]);
 
-  const isLoading = loading && !isRefreshing;
+  // 2. Use useCachedFetch with new positional arguments
+  const { 
+    data: fetchResult, 
+    isLoading: isFetching, 
+    isRefreshing, 
+    refresh 
+  } = useCachedFetch(
+    `admin_certs_p${page}_l${limit}_s${debouncedSearchQuery}`,
+    fetchCerts,
+    { ttl: 1000 * 60 * 5 }
+  );
+
+  const isLoading = isFetching && !isRefreshing;
+
 
   const res = fetchResult || {};
   const certs = Array.isArray(res.data) ? res.data : [];
@@ -106,7 +117,7 @@ export default function CertificationsManager() {
         await certificationService.createCertificate(formData);
       }
       setIsModalOpen(false);
-      await refetch();
+      await refresh();
     } catch (err) {
       alert(getErrorMessage(err));
     } finally {
@@ -120,7 +131,7 @@ export default function CertificationsManager() {
     setDeletingId(id);
     try {
       await certificationService.deleteCertificate(id);
-      await refetch();
+      await refresh();
     } catch (err) {
       alert(getErrorMessage(err));
     } finally {
@@ -136,6 +147,12 @@ export default function CertificationsManager() {
 
   return (
     <div className="flex flex-col h-full relative">
+      {/* Global Loading Pattern ("The Purple Bar") */}
+      {(isFetching || isRefreshing) && (
+        <div className="fixed top-0 left-0 right-0 z-[9999]">
+          <div className="h-[2px] bg-indigo-500 animate-[loading_1.5s_infinite] origin-left"></div>
+        </div>
+      )}
       {/* --- HEADER --- */}
       <div className="flex items-center justify-between mb-8">
         <div>

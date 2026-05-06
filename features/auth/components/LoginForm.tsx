@@ -86,27 +86,27 @@ export default function LoginForm() {
 
   return (
     <section className="w-full h-screen flex items-center justify-center p-4">
-      <MacWindow title="~/auth/login — -zsh" className="dark max-w-[420px] h-auto shadow-2xl">
-        <div className="w-full flex flex-col items-center justify-center p-8 apple-section-dark backdrop-blur-xl relative rounded-b-xl min-h-[450px]">
+      <MacWindow title="~/auth/login — -zsh" className="light max-w-[420px] h-auto shadow-2xl">
+        <div className="w-full flex flex-col items-center justify-center p-8 apple-section-light backdrop-blur-xl relative rounded-b-xl min-h-[450px]">
           {/* Avatar */}
           <div className="mb-8 flex flex-col items-center animate-mac-pop">
             <div className="relative group">
-              <div className="absolute -inset-1 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full opacity-0 group-hover:opacity-50 blur transition duration-500" />
-              <div className="relative w-24 h-24 rounded-full bg-black border border-white/10 shadow-inner flex items-center justify-center mb-4 overflow-hidden">
-                <i className="bx bxs-user bx-lg text-gray-400 group-hover:text-white transition-colors duration-300" />
+              <div className="absolute -inset-1 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full opacity-0 group-hover:opacity-30 blur transition duration-500" />
+              <div className="relative w-24 h-24 rounded-full bg-white border border-black/5 shadow-sm flex items-center justify-center mb-4 overflow-hidden">
+                <i className="bx bxs-user bx-lg text-[#86868b] group-hover:text-blue-500 transition-colors duration-300" />
               </div>
             </div>
-            <h1 className="apple-h3 font-bold text-white tracking-tight">
+            <h1 className="apple-h3 font-bold text-[#1d1d1f] tracking-tight">
               {step === "LOGIN" ? "System Access" : "Two-Factor Auth"}
             </h1>
-            <p className="text-sm text-gray-500 mt-1 font-mono">
+            <p className="apple-small text-[#86868b] mt-1 font-medium">
               {step === "LOGIN" ? "Please identify yourself" : `Sent to: ${emailForVerification}`}
             </p>
           </div>
 
           {/* Error Message */}
           {error && (
-            <div className="mb-6 w-full bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-2.5 rounded-lg text-xs font-medium text-center flex items-center justify-center gap-2 animate-pulse">
+            <div className="mb-6 w-full bg-red-500/10 border border-red-500/20 text-red-600 px-4 py-2.5 rounded-lg text-xs font-medium text-center flex items-center justify-center gap-2 animate-pulse">
               <i className='bx bx-error-circle text-lg' />
               <span>{error}</span>
             </div>
@@ -115,12 +115,12 @@ export default function LoginForm() {
           {step === "LOGIN" ? (
             <form onSubmit={handleLogin} className="space-y-5 w-full">
               <div className="relative group">
-                <i className="bx bx-user absolute left-3 top-2.5 w-5 h-5 text-gray-500 transition-colors group-focus-within:text-blue-400" />
+                <i className="bx bx-user absolute left-3 top-2.5 w-5 h-5 text-[#86868b] transition-colors group-focus-within:text-blue-500" />
                   <input
                   type="email"
                   placeholder="Email Address"
-                  className="w-full bg-[#1c1c1e] border border-white/10 text-white rounded-lg py-2.5 pl-10 pr-3 text-sm placeholder:text-gray-600 
-                             focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all shadow-inner"
+                  className="w-full bg-[#f5f5f7] border border-black/5 text-[#1d1d1f] rounded-lg py-2.5 pl-10 pr-3 text-sm placeholder:text-gray-400 
+                             focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all shadow-sm"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   required
@@ -128,12 +128,12 @@ export default function LoginForm() {
               </div>
 
               <div className="relative group">
-                <i className="bx bx-lock-alt absolute left-3 top-2.5 w-5 h-5 text-gray-500 transition-colors group-focus-within:text-blue-400" />
+                <i className="bx bx-lock-alt absolute left-3 top-2.5 w-5 h-5 text-[#86868b] transition-colors group-focus-within:text-blue-500" />
                 <input
                   type={showPassword ? "text" : "password"}
                   placeholder="Password"
-                  className="w-full bg-[#1c1c1e] border border-white/10 text-white rounded-lg py-2.5 pl-10 pr-10 text-sm placeholder:text-gray-600 
-                             focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all shadow-inner"
+                  className="w-full bg-[#f5f5f7] border border-black/5 text-[#1d1d1f] rounded-lg py-2.5 pl-10 pr-10 text-sm placeholder:text-gray-400 
+                             focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all shadow-sm"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   required
@@ -141,7 +141,7 @@ export default function LoginForm() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-2.5 text-gray-600 hover:text-gray-300 cursor-pointer transition-colors focus:outline-none"
+                  className="absolute right-3 top-2.5 text-[#86868b] hover:text-[#1d1d1f] cursor-pointer transition-colors focus:outline-none"
                 >
                   <i className={`bx ${showPassword ? 'bx-hide' : 'bx-show'} text-lg`} />
                 </button>
@@ -149,7 +149,7 @@ export default function LoginForm() {
 
               <button
                 disabled={loading}
-                className="apple-btn-primary w-full flex items-center justify-center gap-2 mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="apple-btn-primary w-full flex items-center justify-center gap-2 mt-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
               >
                 {loading ? <><i className="bx bx-loader-alt bx-spin text-lg" /> Authenticating...</> : "Login"}
               </button>
@@ -184,8 +184,8 @@ export default function LoginForm() {
                         className={`
                           w-10 h-12 rounded-lg border 
                           flex items-center justify-center text-xl font-bold transition-all duration-200 font-mono
-                          ${isActive ? "border-blue-500 ring-2 ring-blue-500/20 bg-black text-white scale-105 z-10" : "border-white/10 bg-[#1c1c1e]"}
-                          ${isFilled ? "text-white border-white/20" : "text-transparent"}
+                          ${isActive ? "border-blue-500 ring-2 ring-blue-500/20 bg-white text-[#1d1d1f] scale-105 z-10 shadow-lg" : "border-black/5 bg-[#f5f5f7] text-[#1d1d1f]"}
+                          ${isFilled ? "text-[#1d1d1f] border-black/10" : "text-transparent"}
                         `}
                       >
                         {digit}
@@ -199,11 +199,11 @@ export default function LoginForm() {
               <div className="flex justify-center">
                 <label className="flex items-center space-x-2.5 cursor-pointer group select-none">
                   <div className={`w-4 h-4 rounded border flex items-center justify-center transition-all duration-200 
-                                  ${rememberMe ? 'bg-blue-600 border-blue-600' : 'border-gray-600 bg-[#1a1a1a] group-hover:border-gray-500'}`}>
+                                  ${rememberMe ? 'bg-blue-600 border-blue-600' : 'border-gray-300 bg-white group-hover:border-blue-500'}`}>
                     {rememberMe && <i className='bx bx-check text-white text-xs' />}
                   </div>
                   <input type="checkbox" className="hidden" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} />
-                  <span className="text-xs text-gray-500 group-hover:text-gray-300 transition-colors">
+                  <span className="apple-small text-[#86868b] group-hover:text-[#1d1d1f] transition-colors">
                     Trust this device for 30 days
                   </span>
                 </label>
@@ -220,7 +220,7 @@ export default function LoginForm() {
                 </button>
                 <button
                   disabled={loading || formData.code.length < 6}
-                  className="apple-btn-primary h-10 flex items-center justify-center gap-2 disabled:opacity-50 disabled:grayscale"
+                  className="apple-btn-primary h-10 flex items-center justify-center gap-2 disabled:opacity-50 disabled:grayscale shadow-sm"
                 >
                   {loading ? <i className="bx bx-loader-alt bx-spin" /> : "Verify"}
                 </button>

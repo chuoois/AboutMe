@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import type { Skill, PaginatedResponse } from '@/types';
 import { skillsService } from '@/services/skills.service';
 import { useDebounce } from '@/hooks/useDebounce';
@@ -24,23 +24,27 @@ export default function SkillGrid({ initialData }: SkillGridProps) {
 
   const limit = initialData.pagination.limit;
 
-  const { data: fetchResult, loading, isRefreshing } = useCachedFetch({
-    key: `skills_p1_l${limit}_s${debouncedSearch}`,
-    fetcher: async () => {
-      const response = await skillsService.getSkillsForUser({
-        page: 1,
-        limit,
-        search: debouncedSearch || undefined,
-      });
-      return response.data;
-    }
-  });
+  const fetchSkills = useCallback(async () => {
+    const response = await skillsService.getSkillsForUser({
+      page: 1,
+      limit,
+      search: debouncedSearch || undefined,
+    });
+    return response.data;
+  }, [limit, debouncedSearch]);
+
+  const { data: fetchResult, isLoading: isFetching, isRefreshing } = useCachedFetch(
+    `skills_p1_l${limit}_s${debouncedSearch}`,
+    fetchSkills,
+    { ttl: 1000 * 60 * 5 }
+  );
 
   const skills = fetchResult?.data || (!debouncedSearch ? initialData.data : []);
   // Avoid skeleton on server/first-render if we have initialData to match SSR
-  const isLoading = (loading && !isRefreshing) && (mounted ? skills.length === 0 : initialData.data.length === 0);
+  const isLoading = (isFetching && !isRefreshing) && (mounted ? skills.length === 0 : initialData.data.length === 0);
 
   // Group skills by category
+
   const grouped = skills.reduce((acc: Record<string, Skill[]>, skill: Skill) => {
     const cat = skill.category || 'Other';
     if (!acc[cat]) acc[cat] = [];
@@ -49,7 +53,15 @@ export default function SkillGrid({ initialData }: SkillGridProps) {
   }, {});
 
   return (
-    <div className="flex flex-col h-full apple-section-light">
+    <>
+      {/* Global Loading Pattern ("The Purple Bar") */}
+      {(isFetching || isRefreshing) && (
+        <div className="fixed top-0 left-0 right-0 z-[9999]">
+          <div className="h-[2px] bg-indigo-500 animate-[loading_1.5s_infinite] origin-left"></div>
+        </div>
+      )}
+
+      <div className="flex flex-col h-full apple-section-light">
       {/* Toolbar */}
       <div className="h-14 bg-[#f5f5f7] border-b border-black/10 flex items-center px-4 justify-between gap-4 shrink-0">
         <div className="flex items-center gap-2 text-[#86868b] text-sm bg-white px-3 py-1.5 rounded-md border border-black/5 shadow-sm">
@@ -117,5 +129,7 @@ export default function SkillGrid({ initialData }: SkillGridProps) {
         </div>
       </div>
     </div>
+    </>
   );
 }
+

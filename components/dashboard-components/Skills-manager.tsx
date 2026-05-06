@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { skillsService } from "@/services/skills.service";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -42,20 +42,31 @@ export default function SkillsManager() {
     setPage(1);
   }
 
-  const { data: fetchResult, loading, isRefreshing, refetch } = useCachedFetch({
-    key: `admin_skills_p${page}_l${limit}_s${debouncedSearchQuery}_c${selectedCategory}`,
-    fetcher: async () => {
-      const response = await skillsService.getSkills({
-        page,
-        limit,
-        search: debouncedSearchQuery || undefined,
-        category: selectedCategory || undefined,
-      });
-      return response.data;
-    }
-  });
+  // 1. Setup fetch function with useCallback
+  const fetchSkills = useCallback(async () => {
+    const response = await skillsService.getSkills({
+      page,
+      limit,
+      search: debouncedSearchQuery || undefined,
+      category: selectedCategory || undefined,
+    });
+    return response.data;
+  }, [page, limit, debouncedSearchQuery, selectedCategory]);
 
-  const isLoading = loading && !isRefreshing;
+  // 2. Use useCachedFetch with new positional arguments
+  const { 
+    data: fetchResult, 
+    isLoading: isFetching, 
+    isRefreshing, 
+    refresh 
+  } = useCachedFetch(
+    `admin_skills_p${page}_l${limit}_s${debouncedSearchQuery}_c${selectedCategory}`,
+    fetchSkills,
+    { ttl: 1000 * 60 * 5 }
+  );
+
+  const isLoading = isFetching && !isRefreshing;
+
 
   const res = fetchResult || {};
   const skills: Skill[] = useMemo(() => Array.isArray(res.data) ? res.data : [], [res.data]);
@@ -114,7 +125,7 @@ export default function SkillsManager() {
         await skillsService.createSkill(formData);
       }
       setIsModalOpen(false);
-      await refetch();
+      await refresh();
     } catch (err) {
       alert(getErrorMessage(err));
     } finally {
@@ -128,7 +139,7 @@ export default function SkillsManager() {
     setDeletingId(id);
     try {
       await skillsService.deleteSkill(id);
-      await refetch();
+      await refresh();
     } catch (err) {
       alert(getErrorMessage(err));
     } finally {
@@ -147,6 +158,12 @@ export default function SkillsManager() {
 
   return (
     <div className="flex flex-col h-full relative">
+      {/* Global Loading Pattern ("The Purple Bar") */}
+      {(isFetching || isRefreshing) && (
+        <div className="fixed top-0 left-0 right-0 z-[9999]">
+          <div className="h-[2px] bg-indigo-500 animate-[loading_1.5s_infinite] origin-left"></div>
+        </div>
+      )}
       {/* --- HEADER --- */}
       <div className="flex items-center justify-between mb-8">
         <div>

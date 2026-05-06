@@ -14,7 +14,7 @@ export const dbOptions: DataSourceOptions = {
   timezone: "+07:00",
   synchronize: process.env.NODE_ENV !== "production",
   logging: process.env.NODE_ENV !== "production",
-  ssl: {
+  ssl: process.env.DB_SSL === "false" ? undefined : {
     rejectUnauthorized: false,
   },
-};
+};

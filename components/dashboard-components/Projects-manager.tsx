@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { projectsService } from "@/services/projects.service";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -44,19 +44,30 @@ export default function ProjectManager() {
     setPage(1);
   }
 
-  const { data: fetchResult, loading, isRefreshing, refetch } = useCachedFetch({
-    key: `admin_projects_p${page}_l${limit}_s${debouncedSearchQuery}`,
-    fetcher: async () => {
-      const response = await projectsService.getProjects({
-        page,
-        limit,
-        search: debouncedSearchQuery || undefined,
-      });
-      return response.data;
-    }
-  });
+  // 1. Setup fetch function with useCallback
+  const fetchProjects = useCallback(async () => {
+    const response = await projectsService.getProjects({
+      page,
+      limit,
+      search: debouncedSearchQuery || undefined,
+    });
+    return response.data;
+  }, [page, limit, debouncedSearchQuery]);
 
-  const isLoading = loading && !isRefreshing;
+  // 2. Use useCachedFetch with new positional arguments
+  const { 
+    data: fetchResult, 
+    isLoading: isFetching, 
+    isRefreshing, 
+    refresh 
+  } = useCachedFetch(
+    `admin_projects_p${page}_l${limit}_s${debouncedSearchQuery}`,
+    fetchProjects,
+    { ttl: 1000 * 60 * 5 }
+  );
+
+  const isLoading = isFetching && !isRefreshing;
+
 
   const res = fetchResult || {};
   const projects = Array.isArray(res.data) ? res.data : [];
@@ -104,7 +115,7 @@ export default function ProjectManager() {
         await projectsService.createProject(formData);
       }
       setIsModalOpen(false);
-      await refetch();
+      await refresh();
     } catch (err) {
       alert(getErrorMessage(err));
     } finally {
@@ -118,7 +129,7 @@ export default function ProjectManager() {
     setDeletingId(id);
     try {
       await projectsService.deleteProject(id);
-      await refetch();
+      await refresh();
     } catch (err) {
       alert(getErrorMessage(err));
     } finally {
@@ -155,6 +166,12 @@ export default function ProjectManager() {
 
   return (
     <div className="flex flex-col h-full relative">
+      {/* Global Loading Pattern ("The Purple Bar") */}
+      {(isFetching || isRefreshing) && (
+        <div className="fixed top-0 left-0 right-0 z-[9999]">
+          <div className="h-[2px] bg-indigo-500 animate-[loading_1.5s_infinite] origin-left"></div>
+        </div>
+      )}
       {/* HEADER */}
       <div className="flex items-center justify-between mb-8">
         <div>

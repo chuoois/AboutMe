@@ -25,10 +25,14 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(result);
   } catch (error: any) {
-    console.error("[API Projects] Error:", error);
+    console.error("[API Projects] Global error:", error);
     return NextResponse.json(
-      { error: "Internal Server Error", message: error.message },
+      { 
+        error: "Internal Server Error", 
+        message: error.message,
+        details: process.env.NODE_ENV === 'development' ? error.stack : undefined 
+      },
       { status: 500 }
     );
   }
-}
+}

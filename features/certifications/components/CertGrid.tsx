@@ -35,22 +35,26 @@ export default function CertGrid({ initialData }: CertGridProps) {
 
   const limit = initialData.pagination.limit;
 
-  const { data: fetchResult, loading, isRefreshing } = useCachedFetch({
-    key: `certs_p${currentPage}_l${limit}_s${debouncedSearch}`,
-    fetcher: async () => {
-      const response = await certificationService.getCertificatesForUser({
-        page: currentPage,
-        limit,
-        search: debouncedSearch || undefined,
-      });
-      return response.data;
-    }
-  });
+  const fetchCerts = useCallback(async () => {
+    const response = await certificationService.getCertificatesForUser({
+      page: currentPage,
+      limit,
+      search: debouncedSearch || undefined,
+    });
+    return response.data;
+  }, [currentPage, limit, debouncedSearch]);
+
+  const { data: fetchResult, isLoading: isFetching, isRefreshing } = useCachedFetch(
+    `certs_p${currentPage}_l${limit}_s${debouncedSearch}`,
+    fetchCerts,
+    { ttl: 1000 * 60 * 5 }
+  );
 
   const certs = fetchResult?.data || (currentPage === 1 && !debouncedSearch ? initialData.data : []);
   const pagination = fetchResult?.pagination || (currentPage === 1 && !debouncedSearch ? initialData.pagination : { ...initialData.pagination, page: currentPage });
   // Avoid skeleton on server/first-render if we have initialData to match SSR
-  const isLoading = (loading && !isRefreshing) && (mounted ? certs.length === 0 : initialData.data.length === 0);
+  const isLoading = (isFetching && !isRefreshing) && (mounted ? certs.length === 0 : initialData.data.length === 0);
+
 
   const handlePageChange = useCallback((newPage: number) => {
     if (newPage >= 1 && newPage <= pagination.totalPages) {
@@ -61,6 +65,13 @@ export default function CertGrid({ initialData }: CertGridProps) {
 
   return (
     <>
+      {/* Global Loading Pattern ("The Purple Bar") */}
+      {(isFetching || isRefreshing) && (
+        <div className="fixed top-0 left-0 right-0 z-[9999]">
+          <div className="h-[2px] bg-indigo-500 animate-[loading_1.5s_infinite] origin-left"></div>
+        </div>
+      )}
+
       <div className="flex flex-col h-full apple-section-light">
         {/* Toolbar */}
         <div className="h-14 bg-[#f5f5f7] border-b border-black/10 flex items-center px-4 justify-between gap-4 shrink-0">
