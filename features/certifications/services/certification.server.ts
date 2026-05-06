@@ -1,26 +1,25 @@
 // features/certifications/services/certification.server.ts
-import { serverFetch } from "@/services/api/server";
+import { CertificatesController } from "@/server/controllers/certification.controller";
 import type { PaginatedResponse, Cert } from "@/types";
 
 type CertFilters = {
   page?: number;
   limit?: number;
   search?: string;
+  issuer?: string;
 };
 
 export async function getCertificatesForUser(
   filters: CertFilters = {}
 ): Promise<PaginatedResponse<Cert>> {
-  const params = new URLSearchParams();
-  if (filters.page) params.set("page", String(filters.page));
-  if (filters.limit) params.set("limit", String(filters.limit));
-  if (filters.search) params.set("search", filters.search);
+  const page = filters.page || 1;
+  const limit = filters.limit || 10;
+  const search = filters.search;
+  const issuer = filters.issuer;
 
-  const query = params.toString();
-  const endpoint = `/user/certification${query ? `?${query}` : ""}`;
-
-  return serverFetch<PaginatedResponse<Cert>>(endpoint, {
-    revalidate: 60,
-    tags: ["certifications"],
-  });
+  // Gọi trực tiếp controller
+  const result = await CertificatesController.getCertificates(page, limit, search, issuer);
+  
+  return result as unknown as PaginatedResponse<Cert>;
 }
+

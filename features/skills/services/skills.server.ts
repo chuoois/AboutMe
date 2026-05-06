@@ -1,26 +1,25 @@
 // features/skills/services/skills.server.ts
-import { serverFetch } from "@/services/api/server";
+import { SkillsController } from "@/server/controllers/skills.controller";
 import type { PaginatedResponse, Skill } from "@/types";
 
 type SkillFilters = {
   page?: number;
   limit?: number;
   search?: string;
+  category?: string;
 };
 
 export async function getSkillsForUser(
   filters: SkillFilters = {}
 ): Promise<PaginatedResponse<Skill>> {
-  const params = new URLSearchParams();
-  if (filters.page) params.set("page", String(filters.page));
-  if (filters.limit) params.set("limit", String(filters.limit));
-  if (filters.search) params.set("search", filters.search);
+  const page = filters.page || 1;
+  const limit = filters.limit || 50;
+  const search = filters.search;
+  const category = filters.category;
 
-  const query = params.toString();
-  const endpoint = `/user/skills${query ? `?${query}` : ""}`;
-
-  return serverFetch<PaginatedResponse<Skill>>(endpoint, {
-    revalidate: 60,
-    tags: ["skills"],
-  });
+  // Gọi trực tiếp controller
+  const result = await SkillsController.getSkills(page, limit, search, category);
+  
+  return result as unknown as PaginatedResponse<Skill>;
 }
+

@@ -1,7 +1,7 @@
 // services/api/server.ts
 // Server-side fetch wrapper for RSC data fetching (no axios needed)
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL;
 
 type FetchOptions = {
   cache?: RequestCache;
@@ -19,6 +19,10 @@ export async function serverFetch<T>(
 ): Promise<T> {
   const { cache, revalidate, tags } = options;
 
+  // Fallback to localhost only if NEXT_PUBLIC_API_URL is missing
+  // NOTE: This often fails in production if not configured correctly.
+  const baseUrl = API_BASE || 'http://localhost:3000/api';
+
   const fetchOptions: RequestInit & { next?: { revalidate?: number; tags?: string[] } } = {
     headers: {
       'Content-Type': 'application/json',
@@ -35,11 +39,20 @@ export async function serverFetch<T>(
     fetchOptions.next = { revalidate: 60, tags };
   }
 
-  const res = await fetch(`${API_BASE}${endpoint}`, fetchOptions);
+  try {
+    const fullUrl = `${baseUrl}${endpoint}`;
+    const res = await fetch(fullUrl, fetchOptions);
 
-  if (!res.ok) {
-    throw new Error(`API Error: ${res.status} ${res.statusText}`);
+    if (!res.ok) {
+      const errorText = await res.text().catch(() => 'No error body');
+      console.error(`[serverFetch] API Error: ${res.status} ${res.statusText} at ${fullUrl}`, errorText);
+      throw new Error(`API Error: ${res.status} ${res.statusText}`);
+    }
+
+    return res.json();
+  } catch (error) {
+    console.error(`[serverFetch] Fetch failed for ${endpoint}:`, error);
+    throw error;
   }
-
-  return res.json();
 }
+
