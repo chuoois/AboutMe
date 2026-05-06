@@ -55,13 +55,9 @@ export default function MacWindow({
             rounded-mac-window
             
             /* Background chính của cửa sổ */
-            bg-[#f5f5f7]/80 backdrop-blur-3xl
+            bg-[#f5f5f7]/85 backdrop-blur-3xl
             border border-black/10
             shadow-2xl
-            
-            /* Dark mode */
-            dark:bg-black/80 dark:border-white/10
-            dark:apple-shadow
             
             transform-gpu will-change-transform
             ${className}
@@ -70,9 +66,9 @@ export default function MacWindow({
           {/* --- HEADER (ĐÃ CẢI THIỆN ĐỘ TƯƠNG PHẢN) --- */}
           <div 
             className="h-11 flex items-center px-4 gap-4 shrink-0 select-none cursor-default z-20
-                       border-b border-black/5 dark:border-white/10
+                       border-b border-black/5
                        /* Tăng độ đục của nền Header để dễ nhìn hơn */
-                       bg-white/60 dark:bg-[#1c1c1e]/80 backdrop-saturate-150"
+                       bg-white/60 backdrop-saturate-150"
             onPointerDown={(e) => dragControls.start(e)}
           >
             {/* 3 Nút Giao Thông (Trang trí) */}
@@ -85,7 +81,7 @@ export default function MacWindow({
             {/* Tiêu đề (Đậm hơn, rõ hơn) */}
             <div className={`flex-1 flex items-center justify-center min-w-0 pr-12 transition-opacity duration-200 pointer-events-none ${isDragging ? 'opacity-70' : 'opacity-100'}`}>
                <span className="font-semibold text-[13px] tracking-wide flex items-center gap-2 truncate
-                                text-gray-900 dark:text-gray-100 drop-shadow-sm">
+                                 text-gray-900 drop-shadow-sm">
                 {title === "Finder" ? (
                     <i className='bx bxs-face text-mac-system-blue text-lg'></i>
                 ) : (
@@ -98,7 +94,7 @@ export default function MacWindow({
           </div>
 
           {/* --- PHẦN NỘI DUNG --- */}
-          <div className="flex-1 relative overflow-hidden bg-white/40 dark:bg-[#1c1c1e]/40">
+          <div className="flex-1 relative overflow-hidden bg-white/40">
             {isDragging && <div className="absolute inset-0 z-50 bg-transparent" />}
 
             {src ? (
@@ -121,7 +117,7 @@ export default function MacWindow({
               </>
             ) : (
               <div className="w-full h-full overflow-y-auto overflow-x-hidden no-scrollbar
-                              text-[#1d1d1f] dark:text-white">
+                              text-[#1d1d1f]">
                 {children}
               </div>
             )}

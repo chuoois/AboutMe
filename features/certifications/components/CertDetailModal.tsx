@@ -12,18 +12,18 @@ export default function CertDetailModal({ cert, onClose }: CertDetailModalProps)
   if (!cert) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4" onClick={onClose}>
       <div 
-        className="apple-section-dark border border-white/10 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col"
+        className="apple-section-light border border-black/10 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header */}
-        <div className="bg-[#1c1c1e] border-b border-white/10 px-6 py-4 flex items-center justify-between shrink-0">
-          <h2 className="apple-h3 font-semibold text-white flex items-center gap-3">
+        <div className="bg-[#f5f5f7] border-b border-black/10 px-6 py-4 flex items-center justify-between shrink-0">
+          <h2 className="apple-h3 font-semibold text-[#1d1d1f] flex items-center gap-3">
             <i className={`bx ${cert.icon || 'bxs-certification'} text-2xl ${cert.color || 'text-yellow-500'}`} />
             {cert.coursera_name}
           </h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors">
+          <button onClick={onClose} className="text-[#86868b] hover:text-[#1d1d1f] transition-colors">
             <i className='bx bx-x text-2xl' />
           </button>
         </div>
@@ -32,8 +32,8 @@ export default function CertDetailModal({ cert, onClose }: CertDetailModalProps)
         <div className="p-6 overflow-y-auto flex-1">
           <div className="space-y-5">
             <div>
-              <p className="text-sm text-gray-400 mb-1">Issuer</p>
-              <p className="text-white font-medium flex items-center gap-2">
+              <p className="text-sm text-[#86868b] mb-1">Issuer</p>
+              <p className="text-[#1d1d1f] font-medium flex items-center gap-2">
                 <i className='bx bxs-institution' />
                 {cert.issuer}
               </p>
@@ -41,21 +41,21 @@ export default function CertDetailModal({ cert, onClose }: CertDetailModalProps)
 
             {cert.specialization && (
               <div>
-                <p className="text-sm text-gray-400 mb-1">Specialization</p>
-                <span className="inline-block px-3 py-1.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 text-sm font-medium">
+                <p className="text-sm text-[#86868b] mb-1">Specialization</p>
+                <span className="inline-block px-3 py-1.5 rounded-full bg-blue-500/10 text-blue-500 border border-blue-500/20 text-sm font-medium">
                   {cert.specialization}
                 </span>
               </div>
             )}
 
             <div>
-              <p className="text-sm text-gray-400 mb-1">Issued Date</p>
-              <p className="text-white font-mono">{formatDate(cert.issue_date)}</p>
+              <p className="text-sm text-[#86868b] mb-1">Issued Date</p>
+              <p className="text-[#1d1d1f] font-mono">{formatDate(cert.issue_date)}</p>
             </div>
 
             <div>
-              <p className="text-sm text-gray-400 mb-2">Description</p>
-              <p className="text-gray-300 leading-relaxed">{cert.description}</p>
+              <p className="text-sm text-[#86868b] mb-2">Description</p>
+              <p className="text-[#86868b] leading-relaxed">{cert.description}</p>
             </div>
 
             {cert.credential_url && (

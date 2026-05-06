@@ -13,71 +13,73 @@ export default function ProjectDetailModal({ project, onClose }: ProjectDetailMo
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4" 
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4" 
       onClick={onClose}
     >
       <div 
-        className="w-full max-w-3xl" 
+        className="apple-section-light border border-black/10 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        <MacWindow title={project.title} className="dark shadow-2xl">
-          <div className="apple-section-dark text-white min-h-[500px] max-h-[85vh] overflow-y-auto">
-            <div className="p-8">
-              {/* Header with large icon */}
-              <div className="flex items-start gap-6 mb-8">
-                <div className="p-6 rounded-2xl bg-[#1c1c1e] border border-white/10 apple-shadow flex-shrink-0">
-                  <i className={`bx ${project.icon || 'bx-code-alt'} text-6xl ${project.color || 'text-gray-400'}`} />
-                </div>
-                <div className="flex-1">
-                  <h2 className="apple-h3 font-bold text-white mb-4">{project.title}</h2>
-                  <div className="flex flex-wrap gap-3">
-                    {project.git_url && (
-                      <a 
-                        href={project.git_url} target="_blank" rel="noopener noreferrer"
-                        className="flex items-center gap-2 apple-btn-secondary border border-white/10"
-                      >
-                        <i className='bx bxl-github text-xl' />
-                        Source Code
-                      </a>
-                    )}
-                    {project.live_demo_url && (
-                      <a 
-                        href={project.live_demo_url} target="_blank" rel="noopener noreferrer"
-                        className="flex items-center gap-2 apple-btn-primary border border-blue-500/30"
-                      >
-                        <i className='bx bx-link-external text-xl' />
-                        Live Demo
-                      </a>
-                    )}
-                  </div>
-                </div>
-              </div>
+        {/* Modal Header */}
+        <div className="bg-[#f5f5f7] border-b border-black/10 px-6 py-4 flex items-center justify-between shrink-0">
+          <h2 className="apple-h3 font-semibold text-[#1d1d1f] flex items-center gap-3">
+            <i className={`bx ${project.icon || 'bx-code-alt'} text-2xl ${project.color || 'text-[#1d1d1f]'}`} />
+            {project.title}
+          </h2>
+          <button onClick={onClose} className="text-[#86868b] hover:text-[#1d1d1f] transition-colors">
+            <i className='bx bx-x text-2xl' />
+          </button>
+        </div>
 
-              {/* Description */}
-              <div className="mb-8">
-                <h3 className="apple-body font-semibold text-gray-300 mb-3">Description</h3>
-                <p className="text-gray-400 leading-relaxed apple-body whitespace-pre-wrap">
-                  {project.description}
-                </p>
-              </div>
+        {/* Modal Body */}
+        <div className="p-6 overflow-y-auto flex-1">
+          <div className="space-y-6">
+            {/* Action Buttons */}
+            <div className="flex flex-wrap gap-3">
+              {project.git_url && (
+                <a 
+                  href={project.git_url} target="_blank" rel="noopener noreferrer"
+                  className="flex items-center gap-2 apple-btn-secondary border border-black/10"
+                >
+                  <i className='bx bxl-github text-xl' />
+                  Source Code
+                </a>
+              )}
+              {project.live_demo_url && (
+                <a 
+                  href={project.live_demo_url} target="_blank" rel="noopener noreferrer"
+                  className="flex items-center gap-2 apple-btn-primary border border-blue-500/30"
+                >
+                  <i className='bx bx-link-external text-xl' />
+                  Live Demo
+                </a>
+              )}
+            </div>
 
-              {/* Technologies */}
-              <div>
-                <h3 className="apple-body font-semibold text-gray-300 mb-3">Technologies</h3>
-                <div className="flex flex-wrap gap-3">
-                  {project.tags?.map((tag, i) => (
-                    <span
-                      key={i}
-                      className="px-4 py-2 rounded-full bg-[#1c1c1e] text-gray-300 border border-white/10 font-medium apple-small"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
+            {/* Description */}
+            <div>
+              <p className="text-sm text-[#86868b] mb-2 uppercase tracking-wider font-semibold">Description</p>
+              <p className="text-[#1d1d1f] leading-relaxed apple-body whitespace-pre-wrap">
+                {project.description}
+              </p>
+            </div>
+
+            {/* Technologies */}
+            <div>
+              <p className="text-sm text-[#86868b] mb-3 uppercase tracking-wider font-semibold">Technologies</p>
+              <div className="flex flex-wrap gap-2">
+                {project.tags?.map((tag, i) => (
+                  <span
+                    key={i}
+                    className="px-3 py-1.5 rounded-full bg-[#f5f5f7] text-[#1d1d1f] border border-black/5 font-medium apple-small"
+                  >
+                    {tag}
+                  </span>
+                ))}
               </div>
             </div>
           </div>
-        </MacWindow>
+        </div>
       </div>
     </div>
   );

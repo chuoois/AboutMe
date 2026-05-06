@@ -5,7 +5,7 @@ import { formatShortDate, formatTime } from '@/lib/helpers/date';
 
 function MenuItem({ children }: { children: React.ReactNode }) {
   return (
-    <div className="px-2.5 h-[22px] rounded-[4px] flex items-center justify-center hover:bg-white/20 active:bg-white/30 transition-all cursor-default">
+    <div className="px-2.5 h-[22px] rounded-[4px] flex items-center justify-center hover:bg-black/10 active:bg-black/20 transition-all cursor-default">
       {children}
     </div>
   );
@@ -42,14 +42,14 @@ function MenuBar() {
     <header className="fixed top-0 left-0 w-full h-[32px] 
       apple-nav saturate-150
       flex items-center justify-between px-2 sm:px-4 z-[9999] 
-      text-white/90 text-[13px] font-medium select-none shadow-sm transition-colors duration-300"
+      text-[#1d1d1f]/80 text-[13px] font-medium select-none shadow-sm transition-colors duration-300"
     >
       {/* LEFT SIDE */}
       <div className="flex items-center gap-1 h-full">
         <MenuItem>
           <i className='bx bxl-apple text-[1.1rem]' />
         </MenuItem>
-        <div className="hidden md:flex items-center font-normal text-white/90">
+        <div className="hidden md:flex items-center font-normal text-[#1d1d1f]/80">
           <MenuItem>File</MenuItem>
           <MenuItem>Edit</MenuItem>
           <MenuItem>View</MenuItem>
@@ -67,8 +67,8 @@ function MenuBar() {
             <i className='bx bx-search text-[1.1rem]' />
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="text-[11px] hidden lg:block text-white/80">100%</span>
-            <i className='bx bxs-battery-charging text-[1.2rem] text-white' />
+            <span className="text-[11px] hidden lg:block text-[#1d1d1f]/60">100%</span>
+            <i className='bx bxs-battery-charging text-[1.2rem] text-[#1d1d1f]/80' />
           </div>
           <div className="hidden sm:block">
             <i className='bx bx-slider-alt text-[1.1rem] rotate-90' />
@@ -77,7 +77,7 @@ function MenuBar() {
 
         <div className="min-w-[130px] flex justify-end">
           {mounted && date ? (
-            <span className="cursor-default hover:text-white/70 transition-colors">
+            <span className="cursor-default hover:text-[#1d1d1f]/60 transition-colors">
               {formatShortDate(date)} &nbsp; {formatTime(date)}
             </span>
           ) : (

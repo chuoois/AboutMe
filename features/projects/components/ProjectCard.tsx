@@ -11,12 +11,12 @@ export default function ProjectCard({ project, onClick }: ProjectCardProps) {
   return (
     <div
       onClick={onClick}
-      className="group relative bg-[#1c1c1e] border border-white/5 hover:border-blue-500/30 hover:bg-[#2c2c2e] 
+      className="group relative bg-white border border-black/5 hover:border-blue-500/30 hover:bg-[#f9f9fb] 
                  rounded-xl p-5 transition-all duration-300 flex flex-col hover:apple-shadow hover:-translate-y-1 cursor-pointer"
     >
       <div className="flex items-start justify-between mb-4">
-        <div className="p-3 rounded-lg bg-black border border-white/5 group-hover:scale-110 transition-transform duration-300">
-          <i className={`bx ${project.icon || 'bx-code-alt'} text-3xl ${project.color || 'text-gray-400'}`} />
+        <div className="p-3 rounded-lg bg-[#f5f5f7] border border-black/5 group-hover:scale-110 transition-transform duration-300">
+          <i className={`bx ${project.icon || 'bx-code-alt'} text-3xl ${project.color || 'text-[#1d1d1f]'}`} />
         </div>
 
         <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 translate-x-2 group-hover:translate-x-0">
@@ -35,10 +35,10 @@ export default function ProjectCard({ project, onClick }: ProjectCardProps) {
         </div>
       </div>
 
-      <h3 className="apple-body font-bold text-gray-100 mb-2 group-hover:text-blue-400 transition-colors line-clamp-1">
+      <h3 className="apple-body font-bold text-[#1d1d1f] mb-2 group-hover:text-blue-500 transition-colors line-clamp-1">
         {project.title}
       </h3>
-      <p className="apple-small text-gray-400 line-clamp-2 mb-4 leading-relaxed flex-1">
+      <p className="apple-small text-[#86868b] line-clamp-2 mb-4 leading-relaxed flex-1">
         {project.description}
       </p>
 
@@ -46,7 +46,7 @@ export default function ProjectCard({ project, onClick }: ProjectCardProps) {
         {project.tags?.slice(0, 3).map((t, i) => (
           <span
             key={i}
-            className="apple-micro px-2.5 py-1 rounded-full bg-black text-gray-400 border border-white/5 font-medium tracking-wide"
+            className="apple-micro px-2.5 py-1 rounded-full bg-[#f5f5f7] text-[#1d1d1f] border border-black/5 font-medium tracking-wide"
           >
             {t}
           </span>

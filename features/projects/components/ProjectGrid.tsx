@@ -66,15 +66,15 @@ export default function ProjectGrid({ initialData }: ProjectGridProps) {
 
   return (
     <>
-      <div className="flex flex-col h-full apple-section-dark">
+      <div className="flex flex-col h-full apple-section-light">
         {/* Toolbar */}
-        <div className="h-14 bg-black border-b border-white/10 flex items-center px-4 justify-between gap-4 shrink-0">
-          <div className="flex items-center gap-2 text-gray-400 text-sm bg-[#1c1c1e] px-3 py-1.5 rounded-md border border-white/5 shadow-inner">
-            <i className='bx bxs-folder-open text-blue-400' />
-            <span className="text-gray-500">/</span>
-            <span className="font-medium text-gray-200">projects</span>
-            <span className="text-gray-500">/</span>
-            <span className="font-medium text-white apple-small">all</span>
+        <div className="h-14 bg-[#f5f5f7] border-b border-black/10 flex items-center px-4 justify-between gap-4 shrink-0">
+          <div className="flex items-center gap-2 text-[#86868b] text-sm bg-white px-3 py-1.5 rounded-md border border-black/5 shadow-sm">
+            <i className='bx bxs-folder-open text-blue-500' />
+            <span className="text-gray-300">/</span>
+            <span className="font-medium text-[#1d1d1f]">projects</span>
+            <span className="text-gray-300">/</span>
+            <span className="font-medium text-[#1d1d1f] apple-small">all</span>
           </div>
 
           <SearchInput
@@ -85,7 +85,7 @@ export default function ProjectGrid({ initialData }: ProjectGridProps) {
         </div>
 
         {/* Content */}
-        <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 apple-section-dark relative">
+        <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 apple-section-light relative">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {isLoading ? (
               Array.from({ length: pagination.limit }).map((_, idx) => (

@@ -40,9 +40,9 @@ const DockIcon = memo(function DockIcon({ mouseX, item, onClick }: DockIconProps
             exit={{ opacity: 0, y: 0, scale: 0.95 }}
             transition={{ duration: 0.15 }}
             className="absolute -top-12 left-1/2 -translate-x-1/2 px-3 py-1
-                       rounded-lg bg-gray-800/90 text-white
-                       border border-white/10 shadow-xl backdrop-blur-md
-                       text-xs font-medium whitespace-nowrap z-20 pointer-events-none"
+                        rounded-lg bg-white/90 text-[#1d1d1f]
+                        border border-black/10 shadow-xl backdrop-blur-md
+                        text-xs font-medium whitespace-nowrap z-20 pointer-events-none"
           >
             {item.label}
           </motion.div>
@@ -62,7 +62,7 @@ const DockIcon = memo(function DockIcon({ mouseX, item, onClick }: DockIconProps
         <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${item.colorClass} shadow-md transition-all duration-200`} />
         <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-white/30 to-transparent opacity-40 pointer-events-none" />
         <i className={`bx ${item.icon} text-3xl text-white relative z-10 antialiased transform-gpu`} />
-        <div className="absolute -bottom-2 w-1 h-1 rounded-full bg-white/60 opacity-0 group-hover:opacity-100 transition-opacity" />
+        <div className="absolute -bottom-2 w-1 h-1 rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity" />
       </motion.button>
     </div>
   );
@@ -91,7 +91,7 @@ export default function Dock() {
         transition={{ type: "spring", stiffness: 200, damping: 20 }}
         className="pointer-events-auto flex items-end gap-3 px-4 pb-3 pt-4
                    apple-nav
-                   border border-white/10
+                   border border-black/10
                    rounded-[24px] apple-shadow"
       >
         {DOCK_APPS.map((app) => (

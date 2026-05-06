@@ -61,13 +61,13 @@ export default function CertGrid({ initialData }: CertGridProps) {
 
   return (
     <>
-      <div className="flex flex-col h-full apple-section-dark">
+      <div className="flex flex-col h-full apple-section-light">
         {/* Toolbar */}
-        <div className="h-14 bg-black border-b border-white/10 flex items-center px-4 justify-between gap-4 shrink-0">
-          <div className="flex items-center gap-2 text-gray-400 text-sm bg-[#1c1c1e] px-3 py-1.5 rounded-md border border-white/5 shadow-inner">
+        <div className="h-14 bg-[#f5f5f7] border-b border-black/10 flex items-center px-4 justify-between gap-4 shrink-0">
+          <div className="flex items-center gap-2 text-[#86868b] text-sm bg-white px-3 py-1.5 rounded-md border border-black/5 shadow-sm">
             <i className='bx bxs-certification text-yellow-500' />
-            <span className="text-gray-500">/</span>
-            <span className="font-medium text-white apple-small">certificates</span>
+            <span className="text-gray-300">/</span>
+            <span className="font-medium text-[#1d1d1f] apple-small">certificates</span>
           </div>
 
           <SearchInput
@@ -79,7 +79,7 @@ export default function CertGrid({ initialData }: CertGridProps) {
         </div>
 
         {/* Content */}
-        <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 apple-section-dark relative">
+        <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 apple-section-light relative">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {isLoading ? (
               Array.from({ length: pagination.limit }).map((_, idx) => (
@@ -95,11 +95,11 @@ export default function CertGrid({ initialData }: CertGridProps) {
                 <div
                   key={cert.id}
                   onClick={() => setSelectedCert(cert)}
-                  className="group cursor-pointer bg-[#1c1c1e] border border-white/5 hover:border-yellow-500/30 hover:bg-[#2c2c2e] 
+                  className="group cursor-pointer bg-white border border-black/5 hover:border-yellow-500/30 hover:bg-[#f9f9fb] 
                              rounded-xl p-5 transition-all duration-300 flex flex-col h-full hover:apple-shadow hover:-translate-y-1"
                 >
                   <div className="flex items-start justify-between mb-4">
-                    <div className="p-2.5 rounded-lg bg-black border border-white/5 group-hover:scale-110 transition-transform duration-300">
+                    <div className="p-2.5 rounded-lg bg-[#f5f5f7] border border-black/5 group-hover:scale-110 transition-transform duration-300">
                       <i className={`bx ${cert.icon || 'bxs-certification'} text-3xl ${cert.color || 'text-yellow-500'}`} />
                     </div>
                     {cert.credential_url && (
@@ -109,18 +109,18 @@ export default function CertGrid({ initialData }: CertGridProps) {
                     )}
                   </div>
 
-                  <h3 className="apple-body font-bold text-gray-100 mb-1 leading-snug group-hover:text-yellow-400 transition-colors line-clamp-2">
+                  <h3 className="apple-body font-bold text-[#1d1d1f] mb-1 leading-snug group-hover:text-yellow-500 transition-colors line-clamp-2">
                     {cert.coursera_name}
                   </h3>
-                  <p className="apple-small text-gray-400 mb-4 font-medium flex items-center gap-1.5">
-                    <i className='bx bxs-institution text-gray-600' /> {cert.issuer}
+                  <p className="apple-small text-[#86868b] mb-4 font-medium flex items-center gap-1.5">
+                    <i className='bx bxs-institution text-gray-400' /> {cert.issuer}
                   </p>
-                  <p className="apple-small text-gray-500 line-clamp-2 leading-relaxed mb-4">
+                  <p className="apple-small text-[#86868b] line-clamp-2 leading-relaxed mb-4">
                     {cert.description}
                   </p>
 
                   <div className="mt-auto flex gap-2 flex-wrap">
-                    <span className="apple-micro px-2.5 py-1 rounded-full bg-black text-gray-400 border border-white/5 font-mono">
+                    <span className="apple-micro px-2.5 py-1 rounded-full bg-[#f5f5f7] text-[#1d1d1f] border border-black/5 font-mono">
                       {formatDate(cert.issue_date)}
                     </span>
                     {cert.specialization && (

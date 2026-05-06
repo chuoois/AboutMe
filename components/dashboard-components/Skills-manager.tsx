@@ -150,8 +150,8 @@ export default function SkillsManager() {
       {/* --- HEADER --- */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h2 className="text-2xl font-bold text-white tracking-tight">Skills Manager</h2>
-          <p className="text-sm text-gray-500 mt-1">Manage technical skills & technologies.</p>
+          <h2 className="text-2xl font-bold text-[#1d1d1f] tracking-tight">Skills Manager</h2>
+          <p className="text-sm text-[#86868b] mt-1">Manage technical skills & technologies.</p>
         </div>
 
         <button
@@ -166,23 +166,23 @@ export default function SkillsManager() {
       {/* --- SEARCH + CATEGORY FILTER --- */}
       <div className="flex flex-col sm:flex-row gap-4 mb-6">
         <div className="relative flex-1 max-w-md">
-          <i className="bx bx-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
+          <i className="bx bx-search absolute left-3 top-1/2 -translate-y-1/2 text-[#86868b]"></i>
           <input
             type="text"
             placeholder="Search skills or categories..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-[#1a1a1a] border border-white/10 rounded-lg py-2 pl-10 pr-4 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+            className="w-full bg-white border border-black/10 rounded-lg py-2 pl-10 pr-4 text-sm text-[#1d1d1f] placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
           />
           {searchQuery !== debouncedSearchQuery && (
-            <i className="bx bx-loader-alt animate-spin absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm"></i>
+            <i className="bx bx-loader-alt animate-spin absolute right-3 top-1/2 -translate-y-1/2 text-[#86868b] text-sm"></i>
           )}
         </div>
 
         <select
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
-          className="bg-[#1a1a1a] border border-white/10 rounded-lg py-2 px-4 text-sm text-white focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+          className="bg-white border border-black/10 rounded-lg py-2 px-4 text-sm text-[#1d1d1f] focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
         >
           <option value="">All Categories</option>
           {uniqueCategories.map((cat: string) => (
@@ -194,7 +194,7 @@ export default function SkillsManager() {
       </div>
 
       {/* --- TABLE CONTENT (FIX ĐỂ PAGINATION HIỂN THỊ ĐÚNG) --- */}
-      <div className="flex-1 flex flex-col rounded-xl border border-white/10 bg-[#1e1e1e] shadow-inner">
+      <div className="flex-1 flex flex-col rounded-xl border border-black/10 bg-white shadow-sm">
         {/* Scrollable Table */}
         <div className="flex-1 overflow-y-auto custom-scrollbar">
           {isLoading ? (
@@ -209,32 +209,32 @@ export default function SkillsManager() {
             </div>
           ) : (
             <table className="w-full text-left border-collapse">
-              <thead className="bg-[#252525] sticky top-0 z-10">
+              <thead className="bg-[#f5f5f7] sticky top-0 z-10">
                 <tr>
-                  <th className="p-4 w-16 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-white/10 text-center">
+                  <th className="p-4 w-16 text-xs font-medium text-[#86868b] uppercase tracking-wider border-b border-black/5 text-center">
                     Icon
                   </th>
-                  <th className="p-4 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-white/10">
+                  <th className="p-4 text-xs font-medium text-[#86868b] uppercase tracking-wider border-b border-black/5">
                     Skill Name
                   </th>
-                  <th className="p-4 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-white/10">
+                  <th className="p-4 text-xs font-medium text-[#86868b] uppercase tracking-wider border-b border-black/5">
                     Category
                   </th>
-                  <th className="p-4 text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-white/10 text-right">
+                  <th className="p-4 text-xs font-medium text-[#86868b] uppercase tracking-wider border-b border-black/5 text-right">
                     Actions
                   </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
                 {skills.map((skill: Skill) => (
-                  <tr key={skill.id} className="group hover:bg-white/5 transition-colors">
+                  <tr key={skill.id} className="group hover:bg-black/5 transition-colors">
                     <td className="p-4 text-center">
-                      <div className="w-10 h-10 rounded-lg bg-[#2a2a2a] border border-white/5 flex items-center justify-center mx-auto">
-                        <i className={`bx ${skill.icon || "bxs-cube"} text-2xl ${skill.color || "text-white"}`}></i>
+                      <div className="w-10 h-10 rounded-lg bg-[#f5f5f7] border border-black/5 flex items-center justify-center mx-auto">
+                        <i className={`bx ${skill.icon || "bxs-cube"} text-2xl ${skill.color || "text-[#1d1d1f]"}`}></i>
                       </div>
                     </td>
                     <td className="p-4">
-                      <div className="font-bold text-white text-sm">{skill.skill_name}</div>
+                      <div className="font-bold text-[#1d1d1f] text-sm">{skill.skill_name}</div>
                     </td>
                     <td className="p-4">
                       <span
@@ -278,7 +278,7 @@ export default function SkillsManager() {
 
         {/* --- PAGINATION (LUÔN Ở DƯỚI CÙNG) --- */}
         {showPagination && (
-          <div className="shrink-0 px-4 py-3 border-t border-white/10 bg-[#252525] flex items-center justify-between text-sm text-gray-400">
+          <div className="shrink-0 px-4 py-3 border-t border-black/10 bg-[#f5f5f7] flex items-center justify-between text-sm text-[#86868b]">
             <span>
               Page {page} of {totalPages} ({total} total)
             </span>
@@ -286,14 +286,14 @@ export default function SkillsManager() {
               <button
                 onClick={() => goToPage(page - 1)}
                 disabled={page === 1}
-                className="px-3 py-1 rounded bg-[#2a2a2a] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white/10 transition-colors"
+                className="px-3 py-1 rounded bg-white border border-black/5 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-black/5 transition-colors"
               >
                 Previous
               </button>
               <button
                 onClick={() => goToPage(page + 1)}
                 disabled={page === totalPages}
-                className="px-3 py-1 rounded bg-[#2a2a2a] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white/10 transition-colors"
+                className="px-3 py-1 rounded bg-white border border-black/5 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-black/5 transition-colors"
               >
                 Next
               </button>
@@ -311,7 +311,7 @@ export default function SkillsManager() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsModalOpen(false)}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
             />
 
             <motion.div
@@ -320,12 +320,12 @@ export default function SkillsManager() {
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none p-4"
             >
-              <div className="w-full max-w-lg bg-[#1e1e1e] border border-white/10 rounded-xl shadow-2xl pointer-events-auto flex flex-col">
-                <div className="px-6 py-4 border-b border-white/10 flex items-center justify-between bg-[#252525] rounded-t-xl">
-                  <h3 className="text-lg font-bold text-white">
+              <div className="w-full max-w-lg bg-white border border-black/10 rounded-xl shadow-2xl pointer-events-auto flex flex-col">
+                <div className="px-6 py-4 border-b border-black/10 flex items-center justify-between bg-[#f5f5f7] rounded-t-xl">
+                  <h3 className="text-lg font-bold text-[#1d1d1f]">
                     {editingSkill ? "Edit Skill" : "New Skill"}
                   </h3>
-                  <button onClick={() => setIsModalOpen(false)} className="text-gray-500 hover:text-white transition-colors">
+                  <button onClick={() => setIsModalOpen(false)} className="text-[#86868b] hover:text-[#1d1d1f] transition-colors">
                     <i className="bx bx-x text-2xl"></i>
                   </button>
                 </div>

@@ -23,20 +23,20 @@ function Sidebar() {
   return (
     <aside className="
       w-[260px] md:w-[280px] flex flex-col h-full select-none shrink-0
-      bg-[#262626]/95 backdrop-blur-2xl
-      border-r border-black/20
+      bg-[#f6f6f8]/90 backdrop-blur-2xl
+      border-r border-black/10
     ">
       {/* Header */}
       <div className="px-6 pt-10 pb-4">
-        <h1 className="text-2xl font-bold text-white tracking-tight">
+        <h1 className="text-2xl font-bold text-[#1d1d1f] tracking-tight">
           Settings
         </h1>
       </div>
 
       {/* Apple ID Profile */}
       <div className="px-3 mb-4">
-        <div className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 transition-colors cursor-default group">
-          <div className="relative w-12 h-12 rounded-full overflow-hidden shadow-sm ring-1 ring-white/10 group-hover:ring-white/20 transition-all">
+        <div className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-black/5 transition-colors cursor-default group">
+          <div className="relative w-12 h-12 rounded-full overflow-hidden shadow-sm ring-1 ring-black/5 group-hover:ring-black/10 transition-all">
             <Image
               src="https://cdn-media.sforum.vn/storage/app/media/THANHAN/avartar-anime-91.jpg"
               alt="Admin"
@@ -46,10 +46,10 @@ function Sidebar() {
             />
           </div>
           <div className="flex flex-col justify-center overflow-hidden">
-            <span className="text-[13px] font-semibold text-white leading-tight truncate">
+            <span className="text-[13px] font-semibold text-[#1d1d1f] leading-tight truncate">
               Thinh Bui
             </span>
-            <span className="text-[11px] text-gray-500 truncate group-hover:text-gray-400 transition-colors">
+            <span className="text-[11px] text-[#86868b] truncate group-hover:text-[#424245] transition-colors">
               Apple ID, iCloud+ & Media
             </span>
           </div>
@@ -68,7 +68,7 @@ function Sidebar() {
                 group flex items-center gap-3 px-3 py-1.5 rounded-[6px] transition-all duration-200 text-[13px]
                 ${isActive
                   ? "bg-blue-600 text-white font-medium shadow-sm"
-                  : "text-gray-300 hover:bg-white/5 hover:text-white"
+                  : "text-[#1d1d1f] hover:bg-black/5"
                 }
               `}
             >
@@ -92,7 +92,7 @@ function Sidebar() {
         <button
           onClick={handleLogout}
           className="w-full group flex items-center gap-3 px-3 py-1.5 rounded-[6px] transition-all duration-200 text-[13px]
-                     text-gray-300 hover:bg-white/5 hover:text-white"
+                     text-[#1d1d1f] hover:bg-black/5"
         >
           <div className="relative w-6 h-6 flex items-center justify-center shrink-0 rounded-[6px] shadow-sm bg-gradient-to-br from-orange-500 to-red-600">
             <div className="absolute inset-0 rounded-[6px] bg-gradient-to-b from-white/30 to-transparent opacity-30" />
@@ -103,8 +103,8 @@ function Sidebar() {
       </div>
 
       {/* Footer */}
-      <div className="px-5 py-4 border-t border-white/5 bg-transparent">
-        <div className="flex items-center justify-center gap-1.5 text-[10px] text-gray-600 font-mono opacity-60">
+      <div className="px-5 py-4 border-t border-black/5 bg-transparent">
+        <div className="flex items-center justify-center gap-1.5 text-[10px] text-[#86868b] font-mono opacity-60">
           <i className='bx bxl-apple text-sm mb-0.5' />
           <span>System Preferences v14.0</span>
         </div>
