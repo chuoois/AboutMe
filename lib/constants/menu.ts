@@ -7,7 +7,7 @@ export interface AppItem {
 }
 
 export const DOCK_APPS: AppItem[] = [
-  { id: 'home', label: 'Home', icon: 'bxs-home', colorClass: 'from-blue-400 to-blue-600', link: '/home' },
+  { id: 'home', label: 'Home', icon: 'bxs-home', colorClass: 'from-blue-400 to-blue-600', link: '/' },
   { id: 'projects', label: 'Projects', icon: 'bxs-folder-open', colorClass: 'from-green-400 to-emerald-500', link: '/projects' },
   { id: 'skills', label: 'Skills', icon: 'bxs-graduation', colorClass: 'from-purple-500 to-indigo-600', link: '/skills' },
   { id: 'certification', label: 'Certification', icon: 'bxs-certification', colorClass: 'from-red-500 to-pink-600', link: '/certification' },
