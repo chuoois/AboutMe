@@ -17,4 +17,14 @@ export const dbOptions: DataSourceOptions = {
   ssl: process.env.DB_SSL === "false" ? undefined : {
     rejectUnauthorized: false,
   },
-};
+  connectTimeout: 30000, // Tăng lên 30s cho chắc chắn
+  extra: {
+    connectionLimit: 1, // Trong môi trường Serverless, 1 là đủ và an toàn nhất
+    waitForConnections: true,
+    queueLimit: 0,
+    enableKeepAlive: true,
+    keepAliveInitialDelay: 10000,
+  }
+};
+
+

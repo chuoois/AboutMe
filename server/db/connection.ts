@@ -7,7 +7,13 @@ import { AppDataSource } from "./data-source";
  */
 let initializationPromise: Promise<any> | null = null;
 
+/**
+ * Singleton pattern để lấy DataSource đã được initialize.
+ * Giúp tránh lỗi tạo nhiều kết nối cùng lúc trong Next.js (HMR).
+ */
 export const getDataSource = async () => {
+  if (AppDataSource.isInitialized) return AppDataSource;
+
   // Kiểm tra biến môi trường
   const requiredEnv = ["DB_HOST", "DB_USER", "DB_PASSWORD", "DB_NAME"];
   const missingEnv = requiredEnv.filter(env => !process.env[env]);
@@ -16,24 +22,25 @@ export const getDataSource = async () => {
     console.error("[Database] Missing required environment variables:", missingEnv.join(", "));
   }
 
-  if (AppDataSource.isInitialized) {
-    return AppDataSource;
-  }
-
   // Chống race condition: Nếu đang init thì đợi cái cũ, không tạo cái mới
   if (!initializationPromise) {
+    const startTime = Date.now();
     console.log("[Database] Initializing connection to:", process.env.DB_HOST);
+    
     initializationPromise = AppDataSource.initialize()
-      .then(() => {
-        console.log("[Database] Connection initialized successfully.");
-        return AppDataSource;
+      .then((ds) => {
+        const duration = Date.now() - startTime;
+        console.log(`[Database] ✅ Data Source initialized in ${duration}ms`);
+        return ds;
       })
       .catch((err) => {
-        console.error("[Database] Error during Data Source initialization:", err);
+        const duration = Date.now() - startTime;
+        console.error(`[Database] ❌ Error during initialization after ${duration}ms:`, err);
         initializationPromise = null; // Reset để có thể thử lại
         throw err;
       });
   }
+
 
   return initializationPromise;
 };
