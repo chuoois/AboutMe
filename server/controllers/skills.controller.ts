@@ -36,7 +36,7 @@ export const SkillsController = {
     const [data, total] = await qb.getManyAndCount();
 
     // Map data to ensure it's fully serializable
-    const serializedData = data.map(item => ({
+    const serializedData = data.map((item: Skill) => ({
       ...item,
       created_at: item.created_at?.toISOString(),
     }));

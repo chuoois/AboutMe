@@ -1,9 +1,10 @@
 import { getDataSource } from "@/server/db/connection";
+import { EntityManager, MoreThan } from "typeorm";
 import { Admin } from "@/server/entities/admin.entity";
 import { OtpCode } from "@/server/entities/otp_codes.entity";
 import { RefreshToken } from "@/server/entities/refresh_tokens.entity";
 import { TrustedDevice } from "@/server/entities/trusted_devices.entity";
-import { MoreThan } from "typeorm";
+
 import * as bcrypt from "bcryptjs";
 import { v4 as uuidv4 } from "uuid";
 import { verify } from "jsonwebtoken";
@@ -39,17 +40,18 @@ export const AuthController = {
 
       // Nếu thiết bị tin cậy -> Bỏ qua OTP -> Cấp token luôn
       if (trustedDevice) {
-        return await dataSource.transaction(async (manager) => {
+        return await dataSource.transaction(async (manager: EntityManager) => {
           const tokens = await generateTokens(admin.id, admin.email, manager);
           return { status: "LOGIN_SUCCESS", ...tokens };
         });
       }
+
     }
     
     // B3: Nếu không tin cậy -> Gửi OTP
     const code = Math.floor(100000 + Math.random() * 900000).toString();
     
-    await dataSource.transaction(async (manager) => {
+    await dataSource.transaction(async (manager: EntityManager) => {
       await manager.delete(OtpCode, { adminId: admin.id }); // Xóa rác
       const otp = manager.create(OtpCode, {
         adminId: admin.id,
@@ -58,6 +60,7 @@ export const AuthController = {
       });
       await manager.save(otp);
     });
+
 
     await sendOtpEmail(email, code);
     return { status: "OTP_SENT", email };
@@ -85,7 +88,7 @@ export const AuthController = {
 
     if (!validOtp) throw new Error("INVALID_OTP");
     
-    return await dataSource.transaction(async (manager) => {
+    return await dataSource.transaction(async (manager: EntityManager) => {
       // 1. Xóa OTP đã dùng
       await manager.remove(validOtp);
       
@@ -112,6 +115,7 @@ export const AuthController = {
         deviceToken: newDeviceToken 
       };
     });
+
   },
 
   // ==========================================
@@ -126,7 +130,7 @@ export const AuthController = {
       throw new Error("INVALID_REFRESH_TOKEN");
     }
     
-    return await dataSource.transaction(async (manager) => {
+    return await dataSource.transaction(async (manager: EntityManager) => {
       const rtRepo = manager.getRepository(RefreshToken);
       
       const existingToken = await rtRepo.findOne({
@@ -147,6 +151,7 @@ export const AuthController = {
       
       return { status: "LOGIN_SUCCESS", ...tokens };
     });
+
   },
 
   // ==========================================
@@ -154,11 +159,12 @@ export const AuthController = {
   // ==========================================
   logout: async (refreshToken?: string) => {
     const dataSource = await getDataSource();
-    await dataSource.transaction(async (manager) => {
+    await dataSource.transaction(async (manager: EntityManager) => {
       if (refreshToken) {
         await manager.delete(RefreshToken, { token: refreshToken });
       }
     });
+
     return { message: "Logged out" };
   }
 };

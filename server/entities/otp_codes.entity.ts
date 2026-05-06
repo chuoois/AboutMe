@@ -5,7 +5,7 @@ export class OtpCode {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ name: "admin_id" })
+  @Column("int", { name: "admin_id" })
   adminId!: number;
 
   @Column({ type: "varchar", length: 10 })

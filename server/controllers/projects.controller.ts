@@ -37,7 +37,7 @@ export const ProjectsController = {
     const [data, total] = await qb.getManyAndCount();
 
     // Map data to ensure it's fully serializable (convert Dates to ISO strings)
-    const serializedData = data.map(item => ({
+    const serializedData = data.map((item: Projects) => ({
       ...item,
       created_at: item.created_at?.toISOString(),
     }));

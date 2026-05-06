@@ -41,7 +41,7 @@ export const CertificatesController = {
     const [data, total] = await qb.getManyAndCount();
 
     // Map data to ensure it's fully serializable
-    const serializedData = data.map(item => ({
+    const serializedData = data.map((item: Certificate) => ({
       ...item,
       // Ensure Dates are converted to strings for safe RSC transfer
       issue_date: item.issue_date instanceof Date ? item.issue_date.toISOString() : item.issue_date,
