@@ -91,7 +91,7 @@ export default function CertGrid({ initialData }: CertGridProps) {
                 <p>No Certificates Found</p>
               </div>
             ) : (
-              certs.map(cert => (
+              certs.map((cert: Cert) => (
                 <div
                   key={cert.id}
                   onClick={() => setSelectedCert(cert)}

@@ -41,7 +41,7 @@ export default function SkillGrid({ initialData }: SkillGridProps) {
   const isLoading = (loading && !isRefreshing) && (mounted ? skills.length === 0 : initialData.data.length === 0);
 
   // Group skills by category
-  const grouped = skills.reduce((acc: Record<string, Skill[]>, skill) => {
+  const grouped = skills.reduce((acc: Record<string, Skill[]>, skill: Skill) => {
     const cat = skill.category || 'Other';
     if (!acc[cat]) acc[cat] = [];
     acc[cat].push(skill);
@@ -72,13 +72,13 @@ export default function SkillGrid({ initialData }: SkillGridProps) {
           <SkillGridSkeleton />
         ) : (
           <div className="space-y-10">
-            {Object.keys(grouped).map((cat) => (
+            {Object.keys(grouped).map((cat: string) => (
               <div key={cat} className="animate-mac-pop">
                 <h3 className="apple-micro font-bold text-gray-500 uppercase tracking-[0.2em] mb-6 border-b border-white/5 pb-2">
                   {cat}
                 </h3>
                 <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-y-8 gap-x-4">
-                  {grouped[cat].map((skill, idx) => (
+                  {grouped[cat].map((skill: Skill, idx: number) => (
                     <div
                       key={`${skill.id}-${idx}`}
                       className="group flex flex-col items-center gap-3 p-2 rounded-xl hover:bg-white/5 transition-all duration-200 cursor-pointer"

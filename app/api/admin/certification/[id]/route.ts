@@ -34,7 +34,7 @@ export async function GET(
     try {
       const certificate = await CertificatesController.getCertificate(validation.id!);
       return NextResponse.json(certificate);
-    } catch (error) {
+    } catch (error: any) {
       if (error.message === "Certificate not found") {
         return NextResponse.json(
           { error: "Certificate not found" },
@@ -73,7 +73,7 @@ export async function PUT(
       const body = await request.json();
       const updated = await CertificatesController.updateCertificate(validation.id!, body);
       return NextResponse.json(updated);
-    } catch (error) {
+    } catch (error: any) {
       if (error.message === "Certificate not found") {
         return NextResponse.json(
           { error: "Certificate not found" },
@@ -111,7 +111,7 @@ export async function DELETE(
     try {
       const result = await CertificatesController.deleteCertificate(validation.id!);
       return NextResponse.json(result, { status: 200 });
-    } catch (error) {
+    } catch (error: any) {
       if (error.message === "Certificate not found") {
         return NextResponse.json(
           { error: "Certificate not found" },

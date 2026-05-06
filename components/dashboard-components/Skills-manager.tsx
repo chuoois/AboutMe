@@ -63,7 +63,7 @@ export default function SkillsManager() {
   // Derived: Danh sách category duy nhất (an toàn)
   const uniqueCategories = useMemo(() => {
     if (!Array.isArray(skills) || skills.length === 0) return [];
-    const cats = Array.from(new Set(skills.map((s) => s.category).filter(Boolean)));
+    const cats = Array.from(new Set(skills.map((s: Skill) => s.category).filter(Boolean)));
     return cats.sort();
   }, [skills]);
 
@@ -185,7 +185,7 @@ export default function SkillsManager() {
           className="bg-[#1a1a1a] border border-white/10 rounded-lg py-2 px-4 text-sm text-white focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
         >
           <option value="">All Categories</option>
-          {uniqueCategories.map((cat) => (
+          {uniqueCategories.map((cat: string) => (
             <option key={cat} value={cat}>
               {cat}
             </option>
@@ -226,7 +226,7 @@ export default function SkillsManager() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
-                {skills.map((skill) => (
+                {skills.map((skill: Skill) => (
                   <tr key={skill.id} className="group hover:bg-white/5 transition-colors">
                     <td className="p-4 text-center">
                       <div className="w-10 h-10 rounded-lg bg-[#2a2a2a] border border-white/5 flex items-center justify-center mx-auto">
@@ -354,7 +354,7 @@ export default function SkillsManager() {
                         placeholder="Type or select..."
                       />
                       <datalist id="categories">
-                        {uniqueCategories.map((cat) => (
+                        {uniqueCategories.map((cat: string) => (
                           <option key={cat} value={cat} />
                         ))}
                       </datalist>

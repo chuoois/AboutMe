@@ -34,7 +34,7 @@ export async function GET(
     try {
       const project = await ProjectsController.getProject(validation.id!);
       return NextResponse.json(project);
-    } catch (error) {
+    } catch (error: any) {
       if (error.message === "Project not found") {
         return NextResponse.json(
           { error: "Project not found" },
@@ -73,7 +73,7 @@ export async function PUT(
       const body = await request.json();
       const updated = await ProjectsController.updateProject(validation.id!, body);
       return NextResponse.json(updated);
-    } catch (error) {
+    } catch (error: any) {
       if (error.message === "Project not found") {
         return NextResponse.json(
           { error: "Project not found" },
@@ -111,7 +111,7 @@ export async function DELETE(
     try {
       const result = await ProjectsController.deleteProject(validation.id!);
       return NextResponse.json(result, { status: 200 });
-    } catch (error) {
+    } catch (error: any) {
       if (error.message === "Project not found") {
         return NextResponse.json(
           { error: "Project not found" },

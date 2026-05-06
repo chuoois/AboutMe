@@ -118,7 +118,7 @@ export default function UserProfile() {
                         { href: SOCIAL_LINKS.github, icon: 'bxl-github', hover: 'hover:text-white' },
                         { href: SOCIAL_LINKS.discord, icon: 'bxl-discord', hover: 'hover:text-[#5865F2]' },
                         { href: SOCIAL_LINKS.facebook, icon: 'bxl-facebook', hover: 'hover:text-[#1877F2]' },
-                      ].map((link, i) => (
+                      ].map((link: { href: string; icon: string; hover: string }, i: number) => (
                         <a key={i} href={link.href} className={`text-2xl text-gray-500 transition-colors ${link.hover}`}>
                           <i className={`bx ${link.icon}`} />
                         </a>

@@ -26,7 +26,7 @@ export async function POST(req: Request) {
       });
 
       // Access-Token Cookie
-      res.cookies.set("access_token", result.accessToken, {
+      res.cookies.set("access_token", result.accessToken!, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
@@ -35,7 +35,7 @@ export async function POST(req: Request) {
       });
 
       // Refresh-Token Cookie
-      res.cookies.set("refresh_token", result.refreshToken, {
+      res.cookies.set("refresh_token", result.refreshToken!, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",

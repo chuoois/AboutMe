@@ -213,7 +213,7 @@ export default function ProjectManager() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
-                {projects.map((project) => (
+                {projects.map((project: Project) => (
                   <tr key={project.id} className="group hover:bg-white/5 transition-colors">
                     <td className="p-4 text-center">
                       <div className="w-10 h-10 rounded-lg bg-[#2a2a2a] border border-white/5 flex items-center justify-center mx-auto">
@@ -228,7 +228,7 @@ export default function ProjectManager() {
 
                     <td className="p-4">
                       <div className="flex flex-wrap gap-1.5 max-w-[200px]">
-                        {project.tags?.slice(0, 3).map((tag, i) => (
+                        {project.tags?.slice(0, 3).map((tag: string, i: number) => (
                           <span key={i} className="px-2 py-0.5 rounded text-[10px] bg-[#2a2a2a] text-gray-400 border border-white/5 font-mono">
                             {tag}
                           </span>
@@ -405,7 +405,7 @@ export default function ProjectManager() {
                     <div className="space-y-1.5">
                       <label className="text-xs font-medium text-gray-400 uppercase">Tags (Press Enter)</label>
                       <div className="w-full bg-[#1a1a1a] border border-white/10 rounded-lg p-2.5 flex flex-wrap gap-2 min-h-[44px] items-center">
-                        {formData.tags?.map((tag, idx) => (
+                        {formData.tags?.map((tag: string, idx: number) => (
                           <span key={idx} className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 text-xs font-medium">
                             {tag}
                             <button type="button" onClick={() => removeTag(tag)} className="hover:text-white">

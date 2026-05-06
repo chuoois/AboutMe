@@ -34,7 +34,7 @@ export async function GET(
     try {
       const skill = await SkillsController.getSkill(validation.id!);
       return NextResponse.json(skill);
-    } catch (error) {
+    } catch (error: any) {
       if (error.message === "Skill not found") {
         return NextResponse.json(
           { error: "Skill not found" },
@@ -73,7 +73,7 @@ export async function PUT(
       const body = await request.json();
       const updated = await SkillsController.updateSkill(validation.id!, body);
       return NextResponse.json(updated);
-    } catch (error) {
+    } catch (error: any) {
       if (error.message === "Skill not found") {
         return NextResponse.json(
           { error: "Skill not found" },
@@ -111,7 +111,7 @@ export async function DELETE(
     try {
       const result = await SkillsController.deleteSkill(validation.id!);
       return NextResponse.json(result, { status: 200 });
-    } catch (error) {
+    } catch (error: any) {
       if (error.message === "Skill not found") {
         return NextResponse.json(
           { error: "Skill not found" },

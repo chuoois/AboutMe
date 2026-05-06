@@ -194,7 +194,7 @@ export default function CertificationsManager() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
-                {certs.map((cert) => (
+                {certs.map((cert: Cert) => (
                   <tr key={cert.id} className="group hover:bg-white/5 transition-colors">
                     <td className="p-4 text-center">
                       <div className="w-10 h-10 rounded-lg bg-[#2a2a2a] border border-white/5 flex items-center justify-center mx-auto">

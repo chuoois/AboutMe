@@ -97,7 +97,7 @@ export default function ProjectGrid({ initialData }: ProjectGridProps) {
                 <p>No projects found</p>
               </div>
             ) : (
-              projects.map(project => (
+              projects.map((project: Project) => (
                 <ProjectCard
                   key={project.id}
                   project={project}

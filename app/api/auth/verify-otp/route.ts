@@ -14,7 +14,7 @@ export async function POST(req: Request) {
       status: "LOGIN_SUCCESS"
     });
 
-    res.cookies.set("access_token", result.accessToken, {
+    res.cookies.set("access_token", result.accessToken!, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
@@ -22,7 +22,7 @@ export async function POST(req: Request) {
       maxAge: 5 * 60,
     });
 
-    res.cookies.set("refresh_token", result.refreshToken, {
+    res.cookies.set("refresh_token", result.refreshToken!, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",

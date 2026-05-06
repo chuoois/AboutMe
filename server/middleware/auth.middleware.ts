@@ -5,8 +5,8 @@ import { RefreshToken } from "@/server/entities/refresh_tokens.entity";
 
 export async function withAuth(
   request: NextRequest,
-  handler: (req: NextRequest, adminId: number) => Promise<unknown>
-) {
+  handler: (req: NextRequest, adminId: number) => Promise<Response>
+): Promise<Response> {
   const accessToken = request.cookies.get("access_token")?.value;
   const refreshToken = request.cookies.get("refresh_token")?.value;
 
@@ -54,8 +54,10 @@ export async function withAuth(
     // Call handler với adminId
     const data = await handler(request, existingToken.admin.id);
 
+    // Ensure we have a NextResponse to set cookies on
+    const response = data instanceof NextResponse ? data : new NextResponse(data.body, data);
+
     // Set cookie mới cho access token
-    const response = NextResponse.json(data);
     response.cookies.set("access_token", newAccessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
